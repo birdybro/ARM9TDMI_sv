@@ -1,0 +1,8 @@
+.reference/
+build/
+obj_dir/
+*.vcd
+*.fst
+*.log
+__pycache__/
+.pytest_cache/
