@@ -32,13 +32,12 @@
       "id": "ARM9TDMI-PC-STORE-OFFSET-001",
       "profiles": ["ARM9_PROFILE_ARM9TDMI"],
       "category": "pc_semantics",
-      "statement": "The architecture permits ARM STR/STM of R15 to store instruction address plus 8 or plus 12 consistently. The reviewed ARM9TDMI Rev 3 TRM does not explicitly identify its choice; no implementation claim is made yet.",
+      "statement": "ARM9TDMI direct STR, STRT, and STM of R15 store the address of the instruction plus 12.",
       "source_refs": [
-        {"source": "DDI0100I", "locator": "§A2.4.3 Reading the program counter"},
-        {"source": "DDI0180A", "locator": "§1.1; §3 (no explicit stored-PC selection found in reviewed revision)"}
+        {"source": "DDI0180A", "locator": "§2.1 Table 2-1 ARM9TDMI implementation option"}
       ],
-      "implementation": {"status": "UNSPECIFIED_BY_PUBLIC_SOURCE", "rtl": []},
-      "verification": {"status": "UNSPECIFIED_BY_PUBLIC_SOURCE", "tests": []}
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_store_data_select.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/store_data_select_tb.sv"]}
     },
     {
       "id": "ARM946ES-PC-STORE-OFFSET-001",

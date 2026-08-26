@@ -52,6 +52,8 @@ ADDRESS_MODE2_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 SINGLE_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_barrel_shifter.sv \
 	rtl/arm9_address_mode2.sv rtl/arm9_single_transfer_prepare.sv
+STORE_DATA_SELECT_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
+	rtl/arm9_store_data_select.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
@@ -77,6 +79,7 @@ SATURATING_ALU_TB := tb/unit/saturating_alu_tb.sv
 SATURATING_EXECUTE_TB := tb/unit/saturating_execute_tb.sv
 ADDRESS_MODE2_TB := tb/unit/address_mode2_tb.sv
 SINGLE_TRANSFER_PREPARE_TB := tb/unit/single_transfer_prepare_tb.sv
+STORE_DATA_SELECT_TB := tb/unit/store_data_select_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
@@ -88,7 +91,8 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-common-multiply-execute test-dsp-multiply-decoder \
 	test-dsp-multiply-alu test-dsp-multiply-execute test-clz-execute \
 	test-saturating-decoder test-saturating-alu test-saturating-execute \
-	test-address-mode2 test-single-transfer-prepare test-formal synth \
+	test-address-mode2 test-single-transfer-prepare test-store-data-select \
+	test-formal synth \
 	regression clean
 
 all: test
@@ -123,6 +127,7 @@ help:
 	@echo "  test-saturating-execute test integrated saturating execution"
 	@echo "  test-address-mode2 test ARM word/byte address generation"
 	@echo "  test-single-transfer-prepare test conditioned LDR/STR request intent"
+	@echo "  test-store-data-select test profile-specific STR store values"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -204,6 +209,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module single_transfer_prepare_tb \
 		$(SINGLE_TRANSFER_PREPARE_RTL_SOURCES) $(SINGLE_TRANSFER_PREPARE_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module store_data_select_tb \
+		$(STORE_DATA_SELECT_RTL_SOURCES) $(STORE_DATA_SELECT_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -380,6 +388,14 @@ $(BUILD_DIR)/single_transfer_prepare/Vsingle_transfer_prepare_tb: \
 		--top-module single_transfer_prepare_tb \
 		$(SINGLE_TRANSFER_PREPARE_RTL_SOURCES) $(SINGLE_TRANSFER_PREPARE_TB)
 
+$(BUILD_DIR)/store_data_select/Vstore_data_select_tb: \
+	$(STORE_DATA_SELECT_RTL_SOURCES) $(STORE_DATA_SELECT_TB)
+	@mkdir -p $(BUILD_DIR)/store_data_select
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/store_data_select \
+		--top-module store_data_select_tb \
+		$(STORE_DATA_SELECT_RTL_SOURCES) $(STORE_DATA_SELECT_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
@@ -404,7 +420,8 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/saturating_alu/Vsaturating_alu_tb \
 	$(BUILD_DIR)/saturating_execute/Vsaturating_execute_tb \
 	$(BUILD_DIR)/address_mode2/Vaddress_mode2_tb \
-	$(BUILD_DIR)/single_transfer_prepare/Vsingle_transfer_prepare_tb
+	$(BUILD_DIR)/single_transfer_prepare/Vsingle_transfer_prepare_tb \
+	$(BUILD_DIR)/store_data_select/Vstore_data_select_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -484,6 +501,9 @@ test-address-mode2: $(BUILD_DIR)/address_mode2/Vaddress_mode2_tb
 test-single-transfer-prepare: $(BUILD_DIR)/single_transfer_prepare/Vsingle_transfer_prepare_tb
 	$(BUILD_DIR)/single_transfer_prepare/Vsingle_transfer_prepare_tb
 
+test-store-data-select: $(BUILD_DIR)/store_data_select/Vstore_data_select_tb
+	$(BUILD_DIR)/store_data_select/Vstore_data_select_tb
+
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
 	test-data-alu test-immediate test-data-decoder test-data-execute test-pc \
 	test-arm-branch test-multiplier-timing test-multiply-decoder \
@@ -491,7 +511,7 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-dsp-multiply-decoder test-dsp-multiply-alu \
 	test-dsp-multiply-execute test-clz-execute test-saturating-decoder \
 	test-saturating-alu test-saturating-execute test-address-mode2 \
-	test-single-transfer-prepare
+	test-single-transfer-prepare test-store-data-select
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v
