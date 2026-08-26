@@ -22,7 +22,7 @@ Status vocabulary:
 | Profile/revision selection | BASELINED | VERIFIED configuration package | VERIFIED for both profiles |
 | ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14, CPSR/SPSR banks, basic PC addressing) | VERIFIED bank selection, PSR masks, reset fields, ordinary PC reads/writes, and BX targets |
 | ARM condition evaluation | BASELINED | VERIFIED | VERIFIED (256 combinations) |
-| ARM instruction set | PARTIAL | PARTIAL (non-PC data processing, branch execute, common multiply execute, ARMv5TE DSP multiply execute, CLZ, and saturating-arithmetic execute paths) | VERIFIED ALU/shifter/immediate/decode integration, B/BL/BX/BLX profile behavior, conditioned common/DSP multiply, CLZ, and saturating writes/Q requests, plus ARMv5TE profile separation; other classes not implemented |
+| ARM instruction set | PARTIAL | PARTIAL (non-PC data processing, branch execute, common multiply execute, ARMv5TE DSP multiply execute, CLZ, saturating-arithmetic execute, and Addressing Mode 2 generation paths) | VERIFIED ALU/shifter/immediate/decode integration, B/BL/BX/BLX profile behavior, conditioned common/DSP multiply, CLZ, saturating writes/Q requests, and word/byte effective-address generation; memory execution and other classes not implemented |
 | Thumb instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Exceptions and aborts | PARTIAL | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Five-stage pipelines | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |

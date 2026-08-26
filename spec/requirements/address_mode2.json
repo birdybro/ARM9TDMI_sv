@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-ADDRMODE2-CALC-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "ARM Addressing Mode 2 forms an immediate or immediate-shifted register offset, adds or subtracts it from Rn, uses the adjusted address for pre-indexing and Rn itself for post-indexing, and computes the specified writeback address.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.2.1-§A5.2.10"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode2.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode2_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-ADDRMODE2-CONTROL-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "P selects pre/post indexing, U selects add/subtract, B selects byte/word, L selects load/store, post-index always writes back, and P=0/W=1 marks the translated user-privilege access variants.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.2.1 Encoding"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode2.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode2_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-ADDRMODE2-CONSTRAINTS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "For these pre-ARMv6 profiles, register-offset Rm cannot be R15; a writeback form cannot use R15 as Rn, use the same Rn and Rm for a register offset, or use the same Rd and Rn; byte transfers cannot use R15 as Rd.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.23-§A4.1.25; §A4.1.99-§A4.1.101; §A5.2.2-§A5.2.10 Notes"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode2.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode2_tb.sv"]}
+    }
+  ]
+}
