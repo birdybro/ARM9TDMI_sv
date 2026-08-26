@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-DATA-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "For valid data-processing instructions without PC-special behavior, the execute stage selects the encoded immediate or register shifter path, applies the ALU opcode, evaluates the condition, and suppresses result and flag writes when the condition fails.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2; §A3.4; §A5.1"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_execute_tb.sv"]}
+    }
+  ]
+}
