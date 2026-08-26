@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-ARM-QADD-ARITHMETIC-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "QADD and QSUB saturate signed addition or subtraction to the 32-bit signed range; QDADD and QDSUB first saturate Rn multiplied by two and then independently saturate addition or subtraction from Rm.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.46 QADD; §A4.1.50 QDADD; §A4.1.51 QDSUB; §A4.1.52 QSUB"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9e_saturating_alu.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/saturating_alu_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-QADD-FLAGS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "A saturating arithmetic operation requests Q when either specified saturation occurs, Q is sticky when applied, and the operation does not change N, Z, C, or V.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.46, §A4.1.50-§A4.1.52 Operation and Condition flags"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9e_saturating_alu.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/saturating_alu_tb.sv"]}
+    }
+  ]
+}
