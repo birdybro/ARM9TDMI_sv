@@ -5,6 +5,35 @@ package arm9_psr_pkg;
   localparam logic [31:0] ARM9_PSR_Q_MASK       = 32'h0800_0000;
   localparam logic [31:0] ARM9_PSR_CONTROL_MASK = 32'h0000_00ff;
 
+  function automatic logic [31:0] msr_privileged_mask();
+    return 32'h0000_00df;
+  endfunction
+
+  function automatic logic [31:0] msr_state_mask();
+    return 32'h0000_0020;
+  endfunction
+
+  function automatic logic [31:0] msr_unallocated_mask(
+    input arm9_profile_e profile
+  );
+    case (profile)
+      ARM9_PROFILE_ARM9TDMI: return 32'h0fff_ff00;
+      ARM9_PROFILE_ARM946ES: return 32'h07ff_ff00;
+      default: return '0;
+    endcase
+  endfunction
+
+  function automatic logic [31:0] msr_user_mask(
+    input arm9_profile_e profile
+  );
+    case (profile)
+      ARM9_PROFILE_ARM9TDMI: return ARM9_PSR_NZCV_MASK;
+      ARM9_PROFILE_ARM946ES: return ARM9_PSR_NZCV_MASK |
+                                     ARM9_PSR_Q_MASK;
+      default: return '0;
+    endcase
+  endfunction
+
   function automatic logic [31:0] psr_implemented_mask(
     input arm9_profile_e profile
   );

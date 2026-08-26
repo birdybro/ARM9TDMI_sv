@@ -73,6 +73,10 @@ SWI_EXECUTE_RTL_SOURCES := rtl/arm9_condition_eval.sv rtl/arm9_swi_execute.sv
 PSR_TRANSFER_DECODER_RTL_SOURCES := rtl/arm9_psr_transfer_decoder.sv
 MRS_EXECUTE_RTL_SOURCES := rtl/arm9_arch_pkg.sv rtl/arm9_condition_eval.sv \
 	rtl/arm9_psr_transfer_decoder.sv rtl/arm9_mrs_execute.sv
+MSR_EXECUTE_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_arch_pkg.sv \
+	rtl/arm9_psr_pkg.sv rtl/arm9_condition_eval.sv \
+	rtl/arm9_immediate_expander.sv rtl/arm9_psr_transfer_decoder.sv \
+	rtl/arm9_msr_execute.sv
 MISC_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_address_mode3.sv \
 	rtl/arm9_misc_transfer_prepare.sv
@@ -130,6 +134,7 @@ EXCEPTION_ARBITER_TB := tb/unit/exception_arbiter_tb.sv
 SWI_EXECUTE_TB := tb/unit/swi_execute_tb.sv
 PSR_TRANSFER_DECODER_TB := tb/unit/psr_transfer_decoder_tb.sv
 MRS_EXECUTE_TB := tb/unit/mrs_execute_tb.sv
+MSR_EXECUTE_TB := tb/unit/msr_execute_tb.sv
 MISC_TRANSFER_PREPARE_TB := tb/unit/misc_transfer_prepare_tb.sv
 MISC_LOAD_DATA_FORMAT_TB := tb/unit/misc_load_data_format_tb.sv
 MISC_TRANSFER_COMPLETE_TB := tb/unit/misc_transfer_complete_tb.sv
@@ -159,6 +164,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-swi-execute \
 	test-psr-transfer-decoder \
 	test-mrs-execute \
+	test-msr-execute \
 	test-misc-transfer-prepare \
 	test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
@@ -211,6 +217,7 @@ help:
 	@echo "  test-swi-execute test condition-gated ARM SWI requests"
 	@echo "  test-psr-transfer-decoder exhaustively test MRS/MSR encodings"
 	@echo "  test-mrs-execute test conditioned CPSR/SPSR reads in every mode"
+	@echo "  test-msr-execute test profile/privilege-filtered CPSR/SPSR writes"
 	@echo "  test-misc-transfer-prepare test common halfword/signed request intent"
 	@echo "  test-misc-load-data-format test LDRH/LDRSB/LDRSH extension"
 	@echo "  test-misc-transfer-complete test miscellaneous commit and abort intent"
@@ -340,6 +347,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module mrs_execute_tb \
 		$(MRS_EXECUTE_RTL_SOURCES) $(MRS_EXECUTE_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module msr_execute_tb \
+		$(MSR_EXECUTE_RTL_SOURCES) $(MSR_EXECUTE_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module misc_transfer_prepare_tb \
 		$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
@@ -650,6 +660,14 @@ $(BUILD_DIR)/mrs_execute/Vmrs_execute_tb: \
 		--top-module mrs_execute_tb \
 		$(MRS_EXECUTE_RTL_SOURCES) $(MRS_EXECUTE_TB)
 
+$(BUILD_DIR)/msr_execute/Vmsr_execute_tb: \
+	$(MSR_EXECUTE_RTL_SOURCES) $(MSR_EXECUTE_TB)
+	@mkdir -p $(BUILD_DIR)/msr_execute
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/msr_execute \
+		--top-module msr_execute_tb \
+		$(MSR_EXECUTE_RTL_SOURCES) $(MSR_EXECUTE_TB)
+
 $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb: \
 	$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
 	@mkdir -p $(BUILD_DIR)/misc_transfer_prepare
@@ -763,6 +781,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/swi_execute/Vswi_execute_tb \
 	$(BUILD_DIR)/psr_transfer_decoder/Vpsr_transfer_decoder_tb \
 	$(BUILD_DIR)/mrs_execute/Vmrs_execute_tb \
+	$(BUILD_DIR)/msr_execute/Vmsr_execute_tb \
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb \
 	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb \
 	$(BUILD_DIR)/misc_transfer_complete/Vmisc_transfer_complete_tb \
@@ -892,6 +911,9 @@ test-psr-transfer-decoder: \
 test-mrs-execute: $(BUILD_DIR)/mrs_execute/Vmrs_execute_tb
 	$(BUILD_DIR)/mrs_execute/Vmrs_execute_tb
 
+test-msr-execute: $(BUILD_DIR)/msr_execute/Vmsr_execute_tb
+	$(BUILD_DIR)/msr_execute/Vmsr_execute_tb
+
 test-misc-transfer-prepare: $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 
@@ -930,7 +952,7 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-single-load-complete test-single-store-complete test-address-mode3 \
 	test-address-mode4 test-block-transfer-prepare test-block-pc-complete \
 	test-exception-entry test-exception-arbiter test-swi-execute \
-	test-psr-transfer-decoder test-mrs-execute \
+	test-psr-transfer-decoder test-mrs-execute test-msr-execute \
 	test-misc-transfer-prepare test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
 	test-doubleword-transfer-prepare test-doubleword-transfer-complete \

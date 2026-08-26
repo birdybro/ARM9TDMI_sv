@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-MSR-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A condition-passing MSR takes either Rm or the ARM rotated immediate as its operand, expands the four field bits to byte masks, and writes the selected CPSR or current-mode SPSR fields. A failed condition has no architectural effect.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.39 MSR encoding and operation"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_msr_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/msr_execute_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-MSR-IMMEDIATE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "The immediate MSR operand is the zero-extended 8-bit immediate rotated right by twice rotate_imm; all 4096 encoded immediates obey the same PSR update restrictions as register operands.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.39 MSR immediate operand and operation"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_msr_execute.sv", "rtl/arm9_immediate_expander.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/msr_execute_tb.sv", "tb/unit/immediate_expander_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-MSR-PRIVILEGE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "User-mode CPSR writes affect only user-writable flags; privileged/state fields are ignored. SPSR access without a current SPSR, a privileged CPSR attempt to select T state, an operand setting any unallocated bit, or a selected control field receiving a reserved mode encoding is UNPREDICTABLE and produces no constrained PSR-write intent.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.39 MSR operation, usage, and notes"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_msr_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/msr_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-ARM-MSR-MASK-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "status_and_modes",
+      "statement": "ARMv4T MSR treats PSR bits[27:8] as unallocated, permits User writes only to NZCV, and permits privileged CPSR control writes to I, F, and M[4:0] while excluding T.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.39 Table A4-1, operation, usage example, and T-bit note"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_psr_pkg.sv", "rtl/arm9_msr_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/msr_execute_tb.sv"]},
+      "notes": "Issue I prints PrivMask as 0x0000000F, but its normative usage says MSR updates interrupt enables and its example sets CPSR bit 7 through CPSR_c. The implemented 0x000000DF restores those explicitly required I/F bits and excludes StateMask bit 5."
+    },
+    {
+      "id": "ARM946ES-ARM-MSR-MASK-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "ARMv5TE MSR treats PSR bits[26:8] as unallocated, permits User writes to NZCVQ, and permits privileged CPSR control writes to I, F, and M[4:0] while excluding T.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.39 Table A4-1, operation, usage example, and T-bit note"},
+        {"source": "DDI0165B", "locator": "§2.8.1 Q flag; §2.8.2 control bits"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_psr_pkg.sv", "rtl/arm9_msr_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/msr_execute_tb.sv"]},
+      "notes": "Issue I prints PrivMask as 0x0000000F, but the same section explicitly requires interrupt-enable updates through CPSR_c. The implemented 0x000000DF follows that stated behavior and excludes StateMask bit 5."
+    }
+  ]
+}

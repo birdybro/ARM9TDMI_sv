@@ -28,3 +28,11 @@ architecture profile, so Q exists only for ARM946E-S. The status-register reset 
 only initializes the fields the manuals define (Supervisor mode, I=1, F=1, T=0);
 NZCV and Q deliberately have no reset assignment because their post-reset values are
 documented as indeterminate.
+
+Common ARM PSR-transfer decode and MRS/MSR execution are also explicit units. MSR
+applies architecture-specific ARMv4T/v5TE allocated-bit masks before presenting a
+write intent to the state store. DDI0100I Table A4-1 prints `PrivMask` as
+`0x0000000F`, but the same section defines MSR as updating interrupt enables and
+shows `CPSR_c` writing bit 7. The derived mask is therefore `0x000000DF`: I, F, and
+M[4:0], with T excluded by `StateMask`. This documentary inconsistency and its
+resolution are retained in `spec/requirements/msr_execute.json`.
