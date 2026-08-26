@@ -2,14 +2,17 @@ PYTHON ?= python3
 VERILATOR ?= verilator
 BUILD_DIR ?= build
 
-RTL_SOURCES := rtl/arm9_profile_pkg.sv
+PROFILE_RTL_SOURCES := rtl/arm9_profile_pkg.sv
+CONDITION_RTL_SOURCES := rtl/arm9_condition_eval.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
+CONDITION_TB := tb/unit/condition_eval_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
-.PHONY: all help toolchain spec lint compile test test-unit test-arm9tdmi \
-	test-arm946es test-timing test-formal synth regression clean
+.PHONY: all help toolchain spec lint compile test test-unit test-rtl-unit \
+	test-condition test-arm9tdmi test-arm946es test-timing test-formal synth \
+	regression clean
 
 all: test
 
@@ -20,6 +23,7 @@ help:
 	@echo "  lint            run Verilator lint for both profile tests"
 	@echo "  compile         elaborate and compile both profile tests"
 	@echo "  test            run specification and executable unit tests"
+	@echo "  test-condition  exhaustively test all ARM condition/flag inputs"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -36,22 +40,30 @@ spec:
 lint: spec
 	@command -v $(VERILATOR) >/dev/null || { echo "ERROR: Verilator is required" >&2; exit 1; }
 	$(VERILATOR) --lint-only --Wall --assert --timescale 1ns/1ps \
-		--top-module profile_arm9tdmi_tb $(RTL_SOURCES) $(ARM9TDMI_TB)
+		--top-module profile_arm9tdmi_tb $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timescale 1ns/1ps \
-		--top-module profile_arm946es_tb $(RTL_SOURCES) $(ARM946ES_TB)
+		--top-module profile_arm946es_tb $(PROFILE_RTL_SOURCES) $(ARM946ES_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module condition_eval_tb $(CONDITION_RTL_SOURCES) $(CONDITION_TB)
 
-$(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(RTL_SOURCES) $(ARM9TDMI_TB)
+$(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
 	$(VERILATOR) $(VERILATOR_COMMON) --Mdir $(BUILD_DIR)/profile_arm9tdmi \
-		--top-module profile_arm9tdmi_tb $(RTL_SOURCES) $(ARM9TDMI_TB)
+		--top-module profile_arm9tdmi_tb $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 
-$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb: $(RTL_SOURCES) $(ARM946ES_TB)
+$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb: $(PROFILE_RTL_SOURCES) $(ARM946ES_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm946es
 	$(VERILATOR) $(VERILATOR_COMMON) --Mdir $(BUILD_DIR)/profile_arm946es \
-		--top-module profile_arm946es_tb $(RTL_SOURCES) $(ARM946ES_TB)
+		--top-module profile_arm946es_tb $(PROFILE_RTL_SOURCES) $(ARM946ES_TB)
+
+$(BUILD_DIR)/condition_eval/Vcondition_eval_tb: $(CONDITION_RTL_SOURCES) $(CONDITION_TB)
+	@mkdir -p $(BUILD_DIR)/condition_eval
+	$(VERILATOR) $(VERILATOR_COMMON) --timing --Mdir $(BUILD_DIR)/condition_eval \
+		--top-module condition_eval_tb $(CONDITION_RTL_SOURCES) $(CONDITION_TB)
 
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
-	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb
+	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
+	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -62,10 +74,15 @@ test-arm9tdmi: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb
 test-arm946es: $(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb
 
+test-condition: $(BUILD_DIR)/condition_eval/Vcondition_eval_tb
+	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb
+
+test-rtl-unit: test-condition
+
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v
 
-test: spec test-unit test-arm9tdmi test-arm946es
+test: spec test-unit test-rtl-unit test-arm9tdmi test-arm946es
 
 test-formal:
 	@command -v sby >/dev/null || { echo "ERROR: SymbiYosys (sby) is required" >&2; exit 1; }

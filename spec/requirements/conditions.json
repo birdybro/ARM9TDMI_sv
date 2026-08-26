@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "condition_codes": [
+    {"code": "0000", "mnemonics": ["EQ"], "predicate": "Z"},
+    {"code": "0001", "mnemonics": ["NE"], "predicate": "!Z"},
+    {"code": "0010", "mnemonics": ["CS", "HS"], "predicate": "C"},
+    {"code": "0011", "mnemonics": ["CC", "LO"], "predicate": "!C"},
+    {"code": "0100", "mnemonics": ["MI"], "predicate": "N"},
+    {"code": "0101", "mnemonics": ["PL"], "predicate": "!N"},
+    {"code": "0110", "mnemonics": ["VS"], "predicate": "V"},
+    {"code": "0111", "mnemonics": ["VC"], "predicate": "!V"},
+    {"code": "1000", "mnemonics": ["HI"], "predicate": "C && !Z"},
+    {"code": "1001", "mnemonics": ["LS"], "predicate": "!C || Z"},
+    {"code": "1010", "mnemonics": ["GE"], "predicate": "N == V"},
+    {"code": "1011", "mnemonics": ["LT"], "predicate": "N != V"},
+    {"code": "1100", "mnemonics": ["GT"], "predicate": "!Z && (N == V)"},
+    {"code": "1101", "mnemonics": ["LE"], "predicate": "Z || (N != V)"},
+    {"code": "1110", "mnemonics": ["AL"], "predicate": "true"},
+    {"code": "1111", "mnemonics": [], "predicate": "unconditional encoding space classification"}
+  ],
+  "requirements": [
+    {
+      "id": "COMMON-COND-EVAL-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "conditions",
+      "statement": "Condition encodings 0 through 14 evaluate exactly from CPSR N, Z, C, and V using the predicates in condition_codes; encoding 14 always passes.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2; Table A3-1"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_condition_eval.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/condition_eval_tb.sv"]}
+    },
+    {
+      "id": "COMMON-COND-FAIL-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "conditions",
+      "statement": "An ARM instruction that fails its condition has no normal programmer-state, memory, or coprocessor effect, while instruction progression and relevant interrupt and Prefetch Abort checks still occur.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM9TDMI-COND-1111-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm_instruction_encodings",
+      "statement": "In architecture v4, condition field 0b1111 is not a normal condition and the architecture classifies such encodings as UNPREDICTABLE.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2.1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-COND-1111-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "In architecture v5, condition field 0b1111 selects encodings in the unconditional instruction extension space rather than a sixteenth condition predicate.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2.1; §A3.14"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    }
+  ]
+}

@@ -20,6 +20,7 @@ Status vocabulary:
 |---|---|---|---|
 | Profile/revision selection | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | ARM programmer-visible state | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
+| ARM condition evaluation | BASELINED | VERIFIED | VERIFIED (256 combinations) |
 | ARM instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Thumb instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Exceptions and aborts | PARTIAL | NOT IMPLEMENTED | NOT IMPLEMENTED |
