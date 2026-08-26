@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-ARM-DOUBLEWORD-COMPLETE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A successfully completed LDRD writes the two returned words to its even/odd destination pair, STRD writes no destination registers, and pending base writeback commits only after successful completion.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.26 LDRD operation; §A4.1.102 STRD operation; §A5.3"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_complete_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-DOUBLEWORD-DATA-ABORT-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "abort_and_ordering",
+      "statement": "On a precise LDRD Data Abort, values in the two non-base destination registers are architecturally UNPREDICTABLE rather than preserved; any specified base writeback is suppressed by the ARM9E-S base-restored abort model. STRD also suppresses base writeback on a precise abort.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.6.6 Effects of data-aborted instructions, rules 3 and 5"},
+        {"source": "DDI0201D", "locator": "§2.2.1 Data Abort model"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_complete_tb.sv"]}
+    }
+  ]
+}
