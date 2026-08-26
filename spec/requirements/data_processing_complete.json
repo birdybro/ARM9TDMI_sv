@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-DATA-COMPLETE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A completed data-processing result targeting R0-R14 produces its register write, and an S-bit operation targeting R0-R14 produces the ALU NZCV write. Neither intent is emitted for R15.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1 data-processing instruction operation pseudocode"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_complete_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-DATA-PC-WRITE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "A non-S ARM data-processing result targeting R15 produces an ARM-state PC write and pipeline-refill request. ARMv4/v5 require result bits[1:0] to be zero; another value is UNPREDICTABLE and produces no constrained PC-write intent.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.4.3 Writing the program counter; §A3.3 Branch instructions"},
+        {"source": "DDI0165B", "locator": "§8.7 Data operations, PC destination refill description"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_complete.sv", "rtl/arm9_pc_addressing.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_complete_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-DATA-EXCEPTION-RETURN-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "exceptions",
+      "statement": "An S-bit ARM data-processing result targeting R15 atomically branches and restores CPSR from the current-mode SPSR, deriving ARM/Thumb state and target alignment from restored SPSR.T. User or System mode has no SPSR, so this form is UNPREDICTABLE and emits no constrained PC or CPSR write.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.6 Returning from an exception; §A4.1 data-processing S-bit operation"},
+        {"source": "DDI0165B", "locator": "§2.9.3 Leaving an exception"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_complete.sv", "rtl/arm9_pc_addressing.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_complete_tb.sv"]}
+    }
+  ]
+}

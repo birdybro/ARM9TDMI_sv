@@ -16,6 +16,8 @@ DATA_EXECUTE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_barrel_shifter.sv \
 	rtl/arm9_immediate_expander.sv rtl/arm9_data_alu.sv \
 	rtl/arm9_data_processing_decoder.sv rtl/arm9_data_processing_execute.sv
+DATA_COMPLETE_RTL_SOURCES := rtl/arm9_arch_pkg.sv \
+	rtl/arm9_pc_addressing.sv rtl/arm9_data_processing_complete.sv
 PC_RTL_SOURCES := rtl/arm9_pc_addressing.sv
 ARM_BRANCH_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_arm_branch_execute.sv
@@ -106,6 +108,7 @@ DATA_ALU_TB := tb/unit/data_alu_tb.sv
 IMMEDIATE_TB := tb/unit/immediate_expander_tb.sv
 DATA_DECODER_TB := tb/unit/data_processing_decoder_tb.sv
 DATA_EXECUTE_TB := tb/unit/data_processing_execute_tb.sv
+DATA_COMPLETE_TB := tb/unit/data_processing_complete_tb.sv
 PC_TB := tb/unit/pc_addressing_tb.sv
 ARM_BRANCH_TB := tb/unit/arm_branch_execute_tb.sv
 MULTIPLIER_TIMING_TB := tb/unit/multiplier_timing_tb.sv
@@ -151,6 +154,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-condition test-register-file test-arm9tdmi test-arm946es test-timing \
 	test-status-registers test-shifter test-data-alu test-immediate \
 	test-data-decoder test-data-execute test-pc test-arm-branch \
+	test-data-complete \
 	test-multiplier-timing test-multiply-decoder test-common-multiply-alu \
 	test-common-multiply-execute test-dsp-multiply-decoder \
 	test-dsp-multiply-alu test-dsp-multiply-execute test-clz-execute \
@@ -189,6 +193,7 @@ help:
 	@echo "  test-immediate  exhaustively test ARM rotated-immediate encodings"
 	@echo "  test-data-decoder exhaustively test ARM data-processing decode"
 	@echo "  test-data-execute test integrated ARM data-processing execution"
+	@echo "  test-data-complete test data-processing register/PC completion"
 	@echo "  test-pc         test ARM/Thumb PC read and write rules"
 	@echo "  test-arm-branch test profile-specific ARM B/BL/BX/BLX behavior"
 	@echo "  test-multiplier-timing test profile-specific multiply latency"
@@ -264,6 +269,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module data_processing_execute_tb \
 		$(DATA_EXECUTE_RTL_SOURCES) $(DATA_EXECUTE_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module data_processing_complete_tb \
+		$(DATA_COMPLETE_RTL_SOURCES) $(DATA_COMPLETE_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module pc_addressing_tb $(PC_RTL_SOURCES) $(PC_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
@@ -438,6 +446,14 @@ $(BUILD_DIR)/data_processing_execute/Vdata_processing_execute_tb: \
 		--Mdir $(BUILD_DIR)/data_processing_execute \
 		--top-module data_processing_execute_tb \
 		$(DATA_EXECUTE_RTL_SOURCES) $(DATA_EXECUTE_TB)
+
+$(BUILD_DIR)/data_processing_complete/Vdata_processing_complete_tb: \
+	$(DATA_COMPLETE_RTL_SOURCES) $(DATA_COMPLETE_TB)
+	@mkdir -p $(BUILD_DIR)/data_processing_complete
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/data_processing_complete \
+		--top-module data_processing_complete_tb \
+		$(DATA_COMPLETE_RTL_SOURCES) $(DATA_COMPLETE_TB)
 
 $(BUILD_DIR)/pc_addressing/Vpc_addressing_tb: $(PC_RTL_SOURCES) $(PC_TB)
 	@mkdir -p $(BUILD_DIR)/pc_addressing
@@ -753,6 +769,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/immediate_expander/Vimmediate_expander_tb \
 	$(BUILD_DIR)/data_processing_decoder/Vdata_processing_decoder_tb \
 	$(BUILD_DIR)/data_processing_execute/Vdata_processing_execute_tb \
+	$(BUILD_DIR)/data_processing_complete/Vdata_processing_complete_tb \
 	$(BUILD_DIR)/pc_addressing/Vpc_addressing_tb \
 	$(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb \
 	$(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb \
@@ -824,6 +841,10 @@ test-data-decoder: $(BUILD_DIR)/data_processing_decoder/Vdata_processing_decoder
 
 test-data-execute: $(BUILD_DIR)/data_processing_execute/Vdata_processing_execute_tb
 	$(BUILD_DIR)/data_processing_execute/Vdata_processing_execute_tb
+
+test-data-complete: \
+	$(BUILD_DIR)/data_processing_complete/Vdata_processing_complete_tb
+	$(BUILD_DIR)/data_processing_complete/Vdata_processing_complete_tb
 
 test-pc: $(BUILD_DIR)/pc_addressing/Vpc_addressing_tb
 	$(BUILD_DIR)/pc_addressing/Vpc_addressing_tb
@@ -942,7 +963,8 @@ test-swap-complete: $(BUILD_DIR)/swap_complete/Vswap_complete_tb
 	$(BUILD_DIR)/swap_complete/Vswap_complete_tb
 
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
-	test-data-alu test-immediate test-data-decoder test-data-execute test-pc \
+	test-data-alu test-immediate test-data-decoder test-data-execute \
+	test-data-complete test-pc \
 	test-arm-branch test-multiplier-timing test-multiply-decoder \
 	test-common-multiply-alu test-common-multiply-execute \
 	test-dsp-multiply-decoder test-dsp-multiply-alu \
