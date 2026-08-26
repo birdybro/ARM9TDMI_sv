@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-MISC-TRANSFER-PREPARE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A valid STRH, LDRH, LDRSB, or LDRSH emits a byte or halfword memory-request intent only when its ARM condition passes, with operation kind, effective address, load/store direction, signedness, and store halfword derived from the instruction and source register.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.2; §A4.1.28-§A4.1.30; §A4.1.104; §A5.3"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_misc_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/misc_transfer_prepare_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-MISC-TRANSFER-WRITEBACK-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A condition-passing valid post-index or W-bit pre-index miscellaneous transfer emits a pending base-writeback value; preparation does not mutate architectural state.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.3.2-§A5.3.7 operations"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_misc_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/misc_transfer_prepare_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-MISC-TRANSFER-ALIGNMENT-GATE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A condition-passing unaligned halfword miscellaneous transfer is reported as UNPREDICTABLE and emits no constrained request intent; a failed condition causes no access and therefore no alignment behavior.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.2 The condition field; §A4.1.28 LDRH; §A4.1.30 LDRSH; §A4.1.104 STRH"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_misc_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/misc_transfer_prepare_tb.sv"]}
+    }
+  ]
+}
