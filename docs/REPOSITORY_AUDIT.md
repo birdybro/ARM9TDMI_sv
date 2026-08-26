@@ -30,7 +30,7 @@ establish reproducible gates before functional RTL is introduced.
 |---|---|
 | Verilator | 5.050 |
 | Python | 3.14.6 |
-| pytest | installed |
+| pytest | not installed |
 | QEMU system ARM | 11.1.0 |
 | Make, CMake, Ninja | installed |
 | GCC, Clang | installed |

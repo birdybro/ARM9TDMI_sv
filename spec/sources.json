@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "retrieved": "2026-08-25",
+  "sources": [
+    {
+      "key": "DDI0180A",
+      "title": "ARM9TDMI Technical Reference Manual",
+      "revision": "Rev 3 / issue A",
+      "date": "2000-03",
+      "url": "https://developer.arm.com/documentation/ddi0180/a",
+      "sha256": "38fc101a671518a0361271354fd402e9df4ebcbab1e4d0b865c69cc1c32adf44"
+    },
+    {
+      "key": "DDI0201D",
+      "title": "ARM946E-S Technical Reference Manual",
+      "revision": "r1p1 / issue D",
+      "date": "2007-04-17",
+      "url": "https://developer.arm.com/documentation/ddi0201/d",
+      "sha256": "fb45e13849688dcb8165cdf1c5ce0849492a64712ac5f094eecc23955a6d043f"
+    },
+    {
+      "key": "DDI0165B",
+      "title": "ARM9E-S Technical Reference Manual",
+      "revision": "Rev 1 / issue B",
+      "date": "2000-09-12",
+      "url": "https://developer.arm.com/documentation/ddi0165/b",
+      "sha256": "21db45eb339489ce7543e6d63c4ea0db3b6749152e9a51416766246791a0b03f"
+    },
+    {
+      "key": "DDI0100I",
+      "title": "ARM Architecture Reference Manual",
+      "revision": "issue I",
+      "date": "2005-07",
+      "url": "https://developer.arm.com/documentation/ddi0100/i",
+      "sha256": "c441eb7f981f3beb5ad901716808cd54d86e9b41aa68b42a2ce9701831b0b7ea"
+    },
+    {
+      "key": "IHI0011A",
+      "title": "AMBA Specification",
+      "revision": "Rev 2.0 / issue A",
+      "date": "1999-05-13",
+      "url": "https://developer.arm.com/documentation/ihi0011/a",
+      "sha256": "3e2876c47662461726b97f92e6680e6488ebac231a1efecf005a34e6179bdecf"
+    },
+    {
+      "key": "ARM946-PRDC-000592-5.0",
+      "title": "ARM946E-S Revision r1p1 Errata List",
+      "revision": "issue 5.0",
+      "date": "2007-03-12",
+      "url": "https://documentation-service.arm.com/static/5ed4c52cca06a95ce53f91ae",
+      "sha256": "8d43b1f1e99a38cf81aa99acc3c30a5c768291ca2cf6608759bc80e68cd134e0"
+    },
+    {
+      "key": "DDI0157G",
+      "title": "ETM9 Technical Reference Manual",
+      "revision": "r2p2 / issue G",
+      "date": "2002-08-20",
+      "url": "https://documentation-service.arm.com/static/5e8e2b3f88295d1e18d38253",
+      "sha256": "78c49e5ff3cf70c96fd4d60339b8b9d3a097deca46a430d03558e76206a72fa3"
+    },
+    {
+      "key": "IHI0014Q",
+      "title": "Embedded Trace Macrocell Architecture Specification",
+      "revision": "issue Q",
+      "date": "2011-09-23",
+      "url": "https://documentation-service.arm.com/static/5f90158b4966cd7c95fd5b5e",
+      "sha256": "8093a1e74509a30fbc96ff0a70d4e61d6af6022a85f6d728d35ceb33add9ab8b"
+    }
+  ]
+}

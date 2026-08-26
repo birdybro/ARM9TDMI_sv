@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "research_status_values": ["PLANNED", "IN_PROGRESS", "BASELINED", "COMPLETE"],
+  "categories": [
+    {"id": "profiles", "description": "Processor and architecture revision selection", "research_status": "BASELINED"},
+    {"id": "arm_instruction_encodings", "description": "ARM instruction decode and profile legality", "research_status": "PLANNED"},
+    {"id": "thumb_instruction_encodings", "description": "Thumb instruction decode and profile legality", "research_status": "PLANNED"},
+    {"id": "conditions", "description": "Condition execution and flags", "research_status": "PLANNED"},
+    {"id": "status_and_modes", "description": "CPSR, SPSR, modes, banked registers, and privilege", "research_status": "PLANNED"},
+    {"id": "exceptions", "description": "Vectors, LR values, priority, recognition, and entry/return", "research_status": "PLANNED"},
+    {"id": "pc_semantics", "description": "ARM/Thumb PC reads, writes, stores, and refill behavior", "research_status": "PLANNED"},
+    {"id": "pipeline", "description": "Stages, advancement, cancellation, forwarding, and flushing", "research_status": "BASELINED"},
+    {"id": "instruction_timing", "description": "Instruction cycle and bus tables", "research_status": "BASELINED"},
+    {"id": "multiplier_timing", "description": "Profile-specific multiplier latency and dependencies", "research_status": "BASELINED"},
+    {"id": "interlocks", "description": "Load, multiply, multiple-transfer, status, and coprocessor hazards", "research_status": "IN_PROGRESS"},
+    {"id": "abort_and_ordering", "description": "Abort model, access ordering, cancellation, and endianness", "research_status": "IN_PROGRESS"},
+    {"id": "coprocessor", "description": "External coprocessor decode, handshakes, cancellation, and timing", "research_status": "PLANNED"},
+    {"id": "arm9tdmi_memory_interface", "description": "Rev 3 Harvard instruction/data interface and wait states", "research_status": "BASELINED"},
+    {"id": "arm946_cp15", "description": "Complete ARM946E-S CP15 register and operation map", "research_status": "IN_PROGRESS"},
+    {"id": "arm946_mpu", "description": "Eight-region protection unit", "research_status": "BASELINED"},
+    {"id": "arm946_caches", "description": "Instruction/data cache organization and behavior", "research_status": "BASELINED"},
+    {"id": "arm946_tcm", "description": "Instruction/data TCM configuration and interface", "research_status": "BASELINED"},
+    {"id": "arm946_write_buffer", "description": "Write buffer structure, ordering, and drain behavior", "research_status": "BASELINED"},
+    {"id": "arm946_ahb", "description": "ARM946E-S AMBA 2 AHB master behavior", "research_status": "BASELINED"},
+    {"id": "reset_interrupt_clock", "description": "Reset, interrupt sampling, clock enables, and startup", "research_status": "PLANNED"},
+    {"id": "debug_jtag", "description": "TAP, scan chains, EmbeddedICE, and real-time debug", "research_status": "PLANNED"},
+    {"id": "etm_interface", "description": "ARM946E-S processor-side ETM interface", "research_status": "PLANNED"},
+    {"id": "physical_timing", "description": "Published AC edge constraints separated from RTL cycles", "research_status": "PLANNED"},
+    {"id": "trace_format", "description": "Retirement, pipeline, and external bus trace schema", "research_status": "PLANNED"}
+  ]
+}

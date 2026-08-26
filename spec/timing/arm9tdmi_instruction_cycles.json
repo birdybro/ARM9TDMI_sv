@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "table_id": "ARM9TDMI-TIMING-TABLE-001",
+  "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+  "category": "instruction_timing",
+  "source_refs": [{"source": "DDI0180A", "locator": "§7.1 Tables 7-1 through 7-3"}],
+  "symbols": {
+    "b": "coprocessor busy-wait cycles",
+    "m": "multiplier early-termination value from 1 through 4",
+    "n": "number of transferred words",
+    "C": "coprocessor transfer cycle",
+    "I": "internal cycle",
+    "N": "nonsequential cycle",
+    "S": "sequential cycle"
+  },
+  "rows": [
+    {"id": "ARM9TDMI-TIMING-DP-001", "operation": "DataOp", "qualification": "PC is not destination; immediate or immediate shift", "cycles": "1", "instruction_bus": "1S", "data_bus": "1I"},
+    {"id": "ARM9TDMI-TIMING-DP-002", "operation": "DataOp", "qualification": "PC is not destination; register-controlled shift", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "2I"},
+    {"id": "ARM9TDMI-TIMING-DP-003", "operation": "DataOp", "qualification": "PC is destination; no register-controlled shift", "cycles": "3", "instruction_bus": "2S+1N", "data_bus": "3I"},
+    {"id": "ARM9TDMI-TIMING-DP-004", "operation": "DataOp", "qualification": "PC is destination; register-controlled shift", "cycles": "4", "instruction_bus": "2S+1N+1I", "data_bus": "4I"},
+    {"id": "ARM9TDMI-TIMING-LDR-001", "operation": "LDR", "qualification": "PC is not destination and no dependent next instruction", "cycles": "1", "instruction_bus": "1S", "data_bus": "1N"},
+    {"id": "ARM9TDMI-TIMING-LDR-002", "operation": "LDR", "qualification": "word result used by next instruction", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "1N+1I"},
+    {"id": "ARM9TDMI-TIMING-LDR-003", "operation": "LDR", "qualification": "byte, halfword, or unaligned word result used by next instruction", "cycles": "3", "instruction_bus": "1S+2I", "data_bus": "1N+2I"},
+    {"id": "ARM9TDMI-TIMING-LDR-004", "operation": "LDR", "qualification": "PC is destination", "cycles": "5", "instruction_bus": "2S+2I+1N", "data_bus": "1N+4I"},
+    {"id": "ARM9TDMI-TIMING-STR-001", "operation": "STR", "qualification": "all cases", "cycles": "1", "instruction_bus": "1S", "data_bus": "1N"},
+    {"id": "ARM9TDMI-TIMING-LDM-001", "operation": "LDM", "qualification": "one register and not PC", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "1S+1I"},
+    {"id": "ARM9TDMI-TIMING-LDM-002", "operation": "LDM", "qualification": "n greater than one and not PC", "cycles": "n", "instruction_bus": "1S+(n-1)I", "data_bus": "1N+(n-1)S"},
+    {"id": "ARM9TDMI-TIMING-LDM-003", "operation": "LDM", "qualification": "register list includes PC", "cycles": "n+4", "instruction_bus": "2S+1N+(n+1)I", "data_bus": "1N+(n-1)S+4I"},
+    {"id": "ARM9TDMI-TIMING-STM-001", "operation": "STM", "qualification": "one register", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "1N+1I"},
+    {"id": "ARM9TDMI-TIMING-STM-002", "operation": "STM", "qualification": "n greater than one", "cycles": "n", "instruction_bus": "1S+(n-1)I", "data_bus": "1N+(n-1)S"},
+    {"id": "ARM9TDMI-TIMING-SWP-001", "operation": "SWP", "qualification": "no dependent byte consumer", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "2N"},
+    {"id": "ARM9TDMI-TIMING-SWP-002", "operation": "SWP", "qualification": "byte result used by next instruction", "cycles": "3", "instruction_bus": "1S+2I", "data_bus": "2N+1I"},
+    {"id": "ARM9TDMI-TIMING-BRANCH-001", "operation": "B|BL|BX", "qualification": "all cases", "cycles": "3", "instruction_bus": "2S+1N", "data_bus": "3I"},
+    {"id": "ARM9TDMI-TIMING-EXCEPTION-001", "operation": "SWI|Undefined", "qualification": "all cases", "cycles": "3", "instruction_bus": "2S+1N", "data_bus": "3I"},
+    {"id": "ARM9TDMI-TIMING-CDP-001", "operation": "CDP", "qualification": "all cases", "cycles": "b+1", "instruction_bus": "1S+bI", "data_bus": "(b+1)I"},
+    {"id": "ARM9TDMI-TIMING-LDCSTC-001", "operation": "LDC|STC", "qualification": "n words", "cycles": "b+n", "instruction_bus": "1S+(b+n-1)I", "data_bus": "bI+1N+(n-1)S"},
+    {"id": "ARM9TDMI-TIMING-MCR-001", "operation": "MCR", "qualification": "all cases", "cycles": "b+1", "instruction_bus": "1S+bI", "data_bus": "bI+1C"},
+    {"id": "ARM9TDMI-TIMING-MRC-001", "operation": "MRC", "qualification": "normal non-PC destination without immediate consumer", "cycles": "b+1", "instruction_bus": "1S+bI", "data_bus": "bI+1C"},
+    {"id": "ARM9TDMI-TIMING-MRC-002", "operation": "MRC", "qualification": "next instruction uses transferred data", "cycles": "b+2", "instruction_bus": "1S+(b+1)I", "data_bus": "(b+1)I+1C"},
+    {"id": "ARM9TDMI-TIMING-MRC-003", "operation": "MRC", "qualification": "destination is PC", "cycles": "b+3", "instruction_bus": "1S+(b+2)I", "data_bus": "(b+2)I+1C"},
+    {"id": "ARM9TDMI-TIMING-MRS-001", "operation": "MRS", "qualification": "all cases", "cycles": "1", "instruction_bus": "1S", "data_bus": "1I"},
+    {"id": "ARM9TDMI-TIMING-MSR-001", "operation": "MSR", "qualification": "flags-only mask", "cycles": "1", "instruction_bus": "1S", "data_bus": "1I"},
+    {"id": "ARM9TDMI-TIMING-MSR-002", "operation": "MSR", "qualification": "updates any non-flag field", "cycles": "3", "instruction_bus": "1S+2I", "data_bus": "3I"},
+    {"id": "ARM9TDMI-TIMING-MUL-001", "operation": "MUL|MLA", "qualification": "early-termination class m", "cycles": "2+m", "instruction_bus": "1S+(1+m)I", "data_bus": "(2+m)I"},
+    {"id": "ARM9TDMI-TIMING-MULL-001", "operation": "SMULL|UMULL|SMLAL|UMLAL", "qualification": "early-termination class m", "cycles": "3+m", "instruction_bus": "1S+(2+m)I", "data_bus": "(3+m)I"}
+  ],
+  "multiplier_rules": [
+    {"id": "ARM9TDMI-TIMING-MULTERM-001", "operations": "ARM MUL, MLA, SMULL, SMLAL and Thumb MUL", "classes": [
+      {"m": 1, "predicate": "multiplier[31:8] is all zero or all one"},
+      {"m": 2, "predicate": "otherwise, multiplier[31:16] is all zero or all one"},
+      {"m": 3, "predicate": "otherwise, multiplier[31:24] is all zero or all one"},
+      {"m": 4, "predicate": "otherwise"}
+    ]},
+    {"id": "ARM9TDMI-TIMING-MULTERM-002", "operations": "ARM UMULL and UMLAL", "classes": [
+      {"m": 1, "predicate": "multiplier[31:8] is all zero"},
+      {"m": 2, "predicate": "otherwise, multiplier[31:16] is all zero"},
+      {"m": 3, "predicate": "otherwise, multiplier[31:24] is all zero"},
+      {"m": 4, "predicate": "otherwise"}
+    ]}
+  ],
+  "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+  "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+}

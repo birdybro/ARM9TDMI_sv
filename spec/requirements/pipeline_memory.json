@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM9TDMI-PIPELINE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "pipeline",
+      "statement": "The integer pipeline has Fetch, Decode, Execute, Memory, and Write stages.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§2.2; Figure 2-1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-PIPELINE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "pipeline",
+      "statement": "The ARM9E-S integer pipeline has Fetch, Decode, Execute, Memory, and Writeback stages, with automatic forwarding or stalling for dependencies.",
+      "source_refs": [{"source": "DDI0165B", "locator": "§1.1.1; §1.1.3; Figures 1-1 and 1-2"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM9TDMI-MULTIPLIER-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "multiplier_timing",
+      "statement": "Multiply latency uses operand-dependent early termination with m from one through four, selected from high-order sign-extension or zero patterns in the multiplier operand.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§7.1.1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-MULTIPLIER-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "multiplier_timing",
+      "statement": "The enhanced ARM9E-S multiplier uses fixed instruction-class timing and a one-cycle dependency interlock where specified; latency does not use the ARM9TDMI multiplier operand early-termination classes.",
+      "source_refs": [{"source": "DDI0165B", "locator": "§8.1 Table 8-2; §8.10; §8.10.1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM9TDMI-MEMIF-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm9tdmi_memory_interface",
+      "statement": "The core exposes separate instruction and data interfaces; instruction cycle classes are NONSEQ=(InMREQ,ISEQ) 00, SEQ=01, INTERNAL=10, with 11 reserved.",
+      "source_refs": [{"source": "DDI0180A", "locator": "Chapter 3 introduction; §3.2 Table 3-1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM9TDMI-MEMIF-002",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm9tdmi_memory_interface",
+      "statement": "Data cycle classes are NONSEQ=(DnMREQ,DSEQ) 00, SEQ=01, INTERNAL=10, and COPROCESSOR=11.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§3.4 Table 3-3"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM9TDMI-MEMIF-003",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm9tdmi_memory_interface",
+      "statement": "Driving nWAIT low by the end of GCLK phase 2 stalls the core and both pipelined memory interfaces; nWAIT changes only during phase 2.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§3.1.2; Figure 3-1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-MPU-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_mpu",
+      "statement": "The protection unit implements eight variable-size regions; overlapping matches resolve with region 7 highest priority and region 0 lowest.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§4.1; §4.3"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-MPU-002",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_mpu",
+      "statement": "A region is naturally aligned and can encode powers of two from 4KB through 4GB; enabled protection aborts accesses outside all matching regions unless a matching background region is configured.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§4.2.1; §4.2.2 Table 4-2; §4.3.1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-CACHE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_caches",
+      "statement": "Each present cache is four-way set associative with a 32-byte line containing eight words and a single-cycle cache read path.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§3.1; Table 2-4; Figure 3-1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-CACHE-002",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_caches",
+      "statement": "Instruction and data cache sizes are independently configurable as absent or 4KB, 8KB, 16KB, 32KB, 64KB, 128KB, 256KB, 512KB, or 1MB.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§2.3.3 Tables 2-4 through 2-6; §3.1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-TCM-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_tcm",
+      "statement": "Instruction and Data TCM are external single-cycle interfaces independently configurable as absent or powers of two from 4KB through 1MB.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§5.1; §2.3.4 Table 2-8"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-TCM-002",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_tcm",
+      "statement": "Instruction TCM is mapped from address zero when enabled; Data TCM uses a programmable nonzero base and visible size.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§5.1; §5.2.3; §5.2.7; §2.3.12"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-WBUF-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_write_buffer",
+      "statement": "The write buffer is a 16-entry FIFO in which each entry holds either an address plus transfer size or data; reset invalidates every entry.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§6.5"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-WBUF-002",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_write_buffer",
+      "statement": "The CP15 drain operation stalls instruction execution until all buffered writes have completed in external memory.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§2.3.10, Drain write buffer"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-AHB-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_ahb",
+      "statement": "The BIU is an AMBA Rev 2.0 AHB master using pipelined address/control and data phases; HREADY low extends the current data phase and the next address/control phase.",
+      "source_refs": [
+        {"source": "DDI0201D", "locator": "§6.1; §6.2; §6.2.1"},
+        {"source": "IHI0011A", "locator": "Chapter 3, AMBA AHB"}
+      ],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-AHB-002",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm946_ahb",
+      "statement": "Linefills are aligned fixed INCR8 bursts of eight words; dirty half-lines use INCR4 and dirty full lines use INCR8 write-back bursts.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§6.2.3 Table 6-2; §6.2.4 Figure 6-1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    }
+  ]
+}

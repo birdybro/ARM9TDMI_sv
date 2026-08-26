@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM9TDMI-PROFILE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "profiles",
+      "statement": "The profile implements ARM9TDMI Revision 3 and Arm architecture v4T, with 32-bit ARM and 16-bit Thumb instruction sets.",
+      "source_refs": [{"source": "DDI0180A", "locator": "cover; §2.1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM9TDMI-PROFILE-002",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm_instruction_encodings",
+      "statement": "Arm v4/v4T instruction extension spaces are decoded as Undefined rather than accepting later ARMv5TE instructions.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§2.1.2"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-PROFILE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "profiles",
+      "statement": "The profile implements ARM946E-S r1p1 around an ARM9E-S Revision 1 core and exposes Arm architecture v5TE behavior.",
+      "source_refs": [
+        {"source": "DDI0201D", "locator": "cover; §1.1; Table 1-1"},
+        {"source": "DDI0165B", "locator": "cover; §1.1; §2.1"}
+      ],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-PROFILE-002",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "profiles",
+      "statement": "The profile includes the ARM946E-S configurable Harvard caches, two external TCM interfaces, protection unit, CP15, write buffer, AMBA 2 AHB master, external coprocessor interface, debug, and processor-side ETM interface.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§1.1; Figure 1-1; Table 1-1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM9TDMI-ABORT-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "abort_and_ordering",
+      "statement": "On a Data Abort, hardware restores the memory instruction base register to its pre-instruction value.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§2.1.1; Table 2-1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    },
+    {
+      "id": "ARM946ES-ABORT-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "abort_and_ordering",
+      "statement": "The ARM9E-S core uses the base-restored Data Abort model.",
+      "source_refs": [{"source": "DDI0165B", "locator": "§2.10.6 Data Abort; base-restored Data Abort model"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    }
+  ]
+}
