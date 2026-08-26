@@ -19,7 +19,7 @@ class TimingSpecificationTest(unittest.TestCase):
     def test_arm9tdmi_summary_has_every_documented_qualification(self) -> None:
         # REQ: ARM9TDMI-TIMING-TABLE-001
         table = load_timing("arm9tdmi_instruction_cycles.json")
-        self.assertEqual(len(table["rows"]), 29)
+        self.assertEqual(len(table["rows"]), 30)
         self.assertEqual(len(table["multiplier_rules"]), 2)
 
     def test_arm9es_summary_has_every_documented_qualification(self) -> None:

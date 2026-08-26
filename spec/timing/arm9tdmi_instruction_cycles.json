@@ -3,7 +3,7 @@
   "table_id": "ARM9TDMI-TIMING-TABLE-001",
   "profiles": ["ARM9_PROFILE_ARM9TDMI"],
   "category": "instruction_timing",
-  "source_refs": [{"source": "DDI0180A", "locator": "§7.1 Tables 7-1 through 7-3"}],
+  "source_refs": [{"source": "DDI0180A", "locator": "§7.1 Tables 7-1 through 7-3; §7.2.4 Figure 7-4"}],
   "symbols": {
     "b": "coprocessor busy-wait cycles",
     "m": "multiplier early-termination value from 1 through 4",
@@ -26,6 +26,7 @@
     {"id": "ARM9TDMI-TIMING-LDM-001", "operation": "LDM", "qualification": "one register and not PC", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "1S+1I"},
     {"id": "ARM9TDMI-TIMING-LDM-002", "operation": "LDM", "qualification": "n greater than one and not PC", "cycles": "n", "instruction_bus": "1S+(n-1)I", "data_bus": "1N+(n-1)S"},
     {"id": "ARM9TDMI-TIMING-LDM-003", "operation": "LDM", "qualification": "register list includes PC", "cycles": "n+4", "instruction_bus": "2S+1N+(n+1)I", "data_bus": "1N+(n-1)S+4I"},
+    {"id": "ARM9TDMI-TIMING-LDM-004", "operation": "LDM", "qualification": "n greater than one, not PC, final word used next", "cycles": "n+1", "instruction_bus": "1S+nI", "data_bus": "1N+(n-1)S+1I"},
     {"id": "ARM9TDMI-TIMING-STM-001", "operation": "STM", "qualification": "one register", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "1N+1I"},
     {"id": "ARM9TDMI-TIMING-STM-002", "operation": "STM", "qualification": "n greater than one", "cycles": "n", "instruction_bus": "1S+(n-1)I", "data_bus": "1N+(n-1)S"},
     {"id": "ARM9TDMI-TIMING-SWP-001", "operation": "SWP", "qualification": "no dependent byte consumer", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "2N"},
@@ -58,8 +59,8 @@
       {"m": 4, "predicate": "otherwise"}
     ]}
   ],
-  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv", "rtl/arm9_data_operation_timing.sv", "rtl/arm9_pipeline_refill_timing.sv", "rtl/arm9_single_transfer_timing.sv"]},
-  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv", "tb/unit/data_operation_timing_tb.sv", "tb/unit/pipeline_refill_timing_tb.sv", "tb/unit/single_transfer_timing_tb.sv"]},
+  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv", "rtl/arm9_data_operation_timing.sv", "rtl/arm9_pipeline_refill_timing.sv", "rtl/arm9_single_transfer_timing.sv", "rtl/arm9_block_transfer_timing.sv"]},
+  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv", "tb/unit/data_operation_timing_tb.sv", "tb/unit/pipeline_refill_timing_tb.sv", "tb/unit/single_transfer_timing_tb.sv", "tb/unit/block_transfer_timing_tb.sv"]},
   "verified_rows": [
     "ARM9TDMI-TIMING-DP-001",
     "ARM9TDMI-TIMING-DP-002",
@@ -72,9 +73,15 @@
     "ARM9TDMI-TIMING-LDR-003",
     "ARM9TDMI-TIMING-LDR-004",
     "ARM9TDMI-TIMING-STR-001",
+    "ARM9TDMI-TIMING-LDM-001",
+    "ARM9TDMI-TIMING-LDM-002",
+    "ARM9TDMI-TIMING-LDM-003",
+    "ARM9TDMI-TIMING-LDM-004",
+    "ARM9TDMI-TIMING-STM-001",
+    "ARM9TDMI-TIMING-STM-002",
     "ARM9TDMI-TIMING-MRS-001",
     "ARM9TDMI-TIMING-MSR-001",
     "ARM9TDMI-TIMING-MSR-002"
   ],
-  "notes": "Data-operation, single-transfer, branch/exception refill, and MRS/MSR cycle counts and aggregate instruction/data bus class counts are verified. DDI0180A does not publish chronological instruction/data-bus order for the multi-cycle rows, so those per-cycle classes remain explicitly UNSPECIFIED rather than inferred from ARM9E-S."
+  "notes": "Data-operation, single/block-transfer, branch/exception refill, and MRS/MSR cycle counts and aggregate instruction/data bus class counts are verified. The final-word LDM interlock omitted by Table 7-2 is derived from §7.2.4 and Figure 7-4. DDI0180A does not publish complete chronological instruction/data-bus classifications for the multi-cycle rows, so those per-cycle classes remain explicitly UNSPECIFIED rather than inferred from ARM9E-S."
 }

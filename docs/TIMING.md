@@ -7,7 +7,7 @@ status are in `spec/timing/arm9tdmi_instruction_cycles.json` and
 
 No integrated processor pipeline exists yet, so the project does not claim whole-core
 cycle accuracy. The current synthesizable timing controllers cover data operations,
-single loads and stores, branch and synchronous-exception refills, and PSR transfers.
+single and block transfers, branch and synchronous-exception refills, and PSR transfers.
 Each controller exposes the active cycle, total latency, aggregate instruction/data
 bus classes, and a completion pulse. Tests check every active cycle and the completion
 edge for both profiles.
@@ -26,6 +26,8 @@ The currently verified ARM9E-S orders include:
   qualifications `I,N,S,S`
 - LDR/STR: normal `S/N`; word load-use `I,S / N,I`; byte, halfword, or unaligned
   load-use `I,I,S / N,I,I`; PC load `I,I,N,S,S / N,I,I,I,I`
+- LDM/STM: exact Table 8-23 and Table 8-24 orders for every legal transfer count,
+  including final-word interlock and PC refill cases
 - B/BL/BX/BLX and exception entry: `N,S,S / I,I,I`
 - MRS: `I,S`; non-flags-only MSR: `I,I,S`
 
@@ -48,8 +50,8 @@ decision is encoded in the specification database and guarded by
 
 ## Remaining work
 
-Block transfers, swaps, multiply execution sequences, coprocessor operations,
-wait-state insertion, the ARM9TDMI Harvard interfaces, ARM946E-S cache/TCM/write
+Swaps, multiply execution sequences, coprocessor operations, wait-state insertion,
+the ARM9TDMI Harvard interfaces, ARM946E-S cache/TCM/write
 buffer behavior, AHB transactions, debug, reset, interrupt recognition, and a real
 five-stage pipeline are not yet cycle-verified. See `docs/ACCURACY.md` for the full
 status matrix.
