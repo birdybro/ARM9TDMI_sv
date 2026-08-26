@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-SWP-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "Both profiles implement the common conditional ARM SWP and SWPB encodings, distinguished by the B bit, as atomic load/store instructions rather than ordinary Addressing Mode 3 transfers.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.13; §A4.1.108 SWP; §A4.1.109 SWPB"},
+        {"source": "DDI0180A", "locator": "§7.1 Table 7-2 SWP rows"},
+        {"source": "DDI0165B", "locator": "§7.1 Table 7-2 SWP rows"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_swap_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/swap_decoder_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-SWP-CONSTRAINTS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "SWP/SWPB report nonzero reserved bits, any use of R15, and Rn equal to Rd or Rm as UNPREDICTABLE; Rd equal to Rm remains legal.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.108 SWP notes; §A4.1.109 SWPB notes"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_swap_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/swap_decoder_tb.sv"]}
+    }
+  ]
+}
