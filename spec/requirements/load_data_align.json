@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-PREV6-UNALIGNED-WORD-LOAD-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "For these pre-ARMv6 profiles when alignment checking does not abort the access, a single unaligned word load rotates the word-aligned memory value right by eight times effective_address[1:0].",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.8; §A4.1.23 LDR operation and alignment"},
+        {"source": "DDI0165B", "locator": "§4.9.4 Reads"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_load_data_align.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/load_data_align_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-LDRB-ZERO-EXTEND-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "LDRB zero-extends the selected memory byte to 32 bits; endian-dependent selection of the byte lane is performed by the profile memory interface before this formatter.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.24 LDRB"},
+        {"source": "DDI0165B", "locator": "§4.9.4 Byte and halfword accesses, Tables 4-12 and 4-14"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_load_data_align.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/load_data_align_tb.sv"]}
+    }
+  ]
+}
