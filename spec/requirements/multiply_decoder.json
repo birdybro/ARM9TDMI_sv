@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-MULTIPLY-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "The common ARM multiply decoder recognizes MUL, MLA, UMULL, UMLAL, SMULL, and SMLAL encodings, extracts all operand and control fields, and excludes condition field 0b1111 from encoding diagrams whose top field is cond.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2.1; §A3.16.2 Figure A3-3; §A4.1.34; §A4.1.40; §A4.1.76; §A4.1.87; §A4.1.128-§A4.1.129"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_multiply_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/multiply_decoder_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-MULTIPLY-OPERANDS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "Multiply encodings using R15 are identified as UNPREDICTABLE, MUL requires its SBZ field to be zero, and long multiply destination registers must be distinct.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.34 MLA Notes; §A4.1.40 MUL Notes; §A4.1.76 SMLAL Notes; §A4.1.87 SMULL Notes; §A4.1.128 UMLAL Notes; §A4.1.129 UMULL Notes"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_multiply_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/multiply_decoder_tb.sv"]}
+    }
+  ]
+}

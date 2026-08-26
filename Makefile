@@ -21,6 +21,8 @@ ARM_BRANCH_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_arm_branch_execute.sv
 MULTIPLIER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_isa_pkg.sv \
 	rtl/arm9_multiplier_timing.sv
+MULTIPLY_DECODER_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
+	rtl/arm9_multiply_decoder.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
@@ -34,6 +36,7 @@ DATA_EXECUTE_TB := tb/unit/data_processing_execute_tb.sv
 PC_TB := tb/unit/pc_addressing_tb.sv
 ARM_BRANCH_TB := tb/unit/arm_branch_execute_tb.sv
 MULTIPLIER_TIMING_TB := tb/unit/multiplier_timing_tb.sv
+MULTIPLY_DECODER_TB := tb/unit/multiply_decoder_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
@@ -41,7 +44,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-condition test-register-file test-arm9tdmi test-arm946es test-timing \
 	test-status-registers test-shifter test-data-alu test-immediate \
 	test-data-decoder test-data-execute test-pc test-arm-branch \
-	test-multiplier-timing test-formal synth regression clean
+	test-multiplier-timing test-multiply-decoder test-formal synth regression clean
 
 all: test
 
@@ -63,6 +66,7 @@ help:
 	@echo "  test-pc         test ARM/Thumb PC read and write rules"
 	@echo "  test-arm-branch test profile-specific ARM B/BL/BX/BLX behavior"
 	@echo "  test-multiplier-timing test profile-specific multiply latency"
+	@echo "  test-multiply-decoder test common ARM multiply decode space"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -108,6 +112,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module multiplier_timing_tb \
 		$(MULTIPLIER_TIMING_RTL_SOURCES) $(MULTIPLIER_TIMING_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module multiply_decoder_tb \
+		$(MULTIPLY_DECODER_RTL_SOURCES) $(MULTIPLY_DECODER_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -188,6 +195,14 @@ $(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb: \
 		--top-module multiplier_timing_tb \
 		$(MULTIPLIER_TIMING_RTL_SOURCES) $(MULTIPLIER_TIMING_TB)
 
+$(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb: \
+	$(MULTIPLY_DECODER_RTL_SOURCES) $(MULTIPLY_DECODER_TB)
+	@mkdir -p $(BUILD_DIR)/multiply_decoder
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/multiply_decoder \
+		--top-module multiply_decoder_tb \
+		$(MULTIPLY_DECODER_RTL_SOURCES) $(MULTIPLY_DECODER_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
@@ -200,7 +215,8 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/data_processing_execute/Vdata_processing_execute_tb \
 	$(BUILD_DIR)/pc_addressing/Vpc_addressing_tb \
 	$(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb \
-	$(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb
+	$(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb \
+	$(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -244,9 +260,12 @@ test-arm-branch: $(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb
 test-multiplier-timing: $(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb
 	$(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb
 
+test-multiply-decoder: $(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb
+	$(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb
+
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
 	test-data-alu test-immediate test-data-decoder test-data-execute test-pc \
-	test-arm-branch test-multiplier-timing
+	test-arm-branch test-multiplier-timing test-multiply-decoder
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v
