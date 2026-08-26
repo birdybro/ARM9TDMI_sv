@@ -11,6 +11,10 @@ def load_timing(name: str) -> dict:
         return json.load(handle)
 
 
+def row_by_id(table: dict, row_id: str) -> dict:
+    return next(row for row in table["rows"] if row["id"] == row_id)
+
+
 class TimingSpecificationTest(unittest.TestCase):
     def test_arm9tdmi_summary_has_every_documented_qualification(self) -> None:
         # REQ: ARM9TDMI-TIMING-TABLE-001
@@ -31,6 +35,27 @@ class TimingSpecificationTest(unittest.TestCase):
         arm9e = load_timing("arm9es_instruction_cycles.json")
         self.assertIn("m", tdmi["symbols"])
         self.assertNotIn("m", arm9e["symbols"])
+
+    def test_one_register_ldm_conflict_is_resolved_per_profile(self) -> None:
+        # REQ: ARM9TDMI-TIMING-LDM-001
+        # REQ: ARM946ES-TIMING-LDM-001
+        tdmi = load_timing("arm9tdmi_instruction_cycles.json")
+        arm9e = load_timing("arm9es_instruction_cycles.json")
+
+        self.assertEqual(
+            row_by_id(tdmi, "ARM9TDMI-TIMING-LDM-001")["data_bus"],
+            "1S+1I",
+        )
+        self.assertEqual(
+            row_by_id(arm9e, "ARM946ES-TIMING-LDM-001")["data_bus"],
+            "1N+1I",
+        )
+        conflicts = {
+            conflict["id"]: conflict for conflict in arm9e["source_conflicts"]
+        }
+        resolution = conflicts["ARM946ES-TIMING-LDM-DATABUS-001"]
+        self.assertIn("Table 8-23", resolution["detailed_source"])
+        self.assertIn("more specific", resolution["resolution"])
 
 
 if __name__ == "__main__":

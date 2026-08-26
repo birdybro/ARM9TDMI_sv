@@ -9,7 +9,8 @@ processor profiles:
 The repository is in its specification and infrastructure phase. It does **not** yet
 claim ISA completeness, cycle accuracy, or ARM946E-S memory-system completeness.
 Feature status and evidence will be tracked in `docs/ACCURACY.md`; authoritative
-source selection and file hashes are recorded in `docs/SOURCES.md`.
+source selection and file hashes are recorded in `docs/SOURCES.md`; cycle-table
+coverage and source-conflict resolutions are recorded in `docs/TIMING.md`.
 
 Reference manuals are downloaded for local research into the ignored `.reference/`
 directory. Copyrighted manuals are not part of this repository.
