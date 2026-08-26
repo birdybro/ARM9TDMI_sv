@@ -8,18 +8,20 @@ REGISTER_FILE_RTL_SOURCES := rtl/arm9_arch_pkg.sv rtl/arm9_banked_register_file.
 STATUS_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_arch_pkg.sv \
 	rtl/arm9_psr_pkg.sv rtl/arm9_status_registers.sv
 SHIFTER_RTL_SOURCES := rtl/arm9_isa_pkg.sv rtl/arm9_barrel_shifter.sv
+DATA_ALU_RTL_SOURCES := rtl/arm9_isa_pkg.sv rtl/arm9_data_alu.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
 REGISTER_FILE_TB := tb/unit/banked_register_file_tb.sv
 STATUS_TB := tb/unit/status_registers_tb.sv
 SHIFTER_TB := tb/unit/barrel_shifter_tb.sv
+DATA_ALU_TB := tb/unit/data_alu_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
 .PHONY: all help toolchain spec lint compile test test-unit test-rtl-unit \
 	test-condition test-register-file test-arm9tdmi test-arm946es test-timing \
-	test-status-registers test-shifter test-formal synth regression clean
+	test-status-registers test-shifter test-data-alu test-formal synth regression clean
 
 all: test
 
@@ -34,6 +36,7 @@ help:
 	@echo "  test-register-file test all architectural register banks"
 	@echo "  test-status-registers test CPSR/SPSR storage and profile masks"
 	@echo "  test-shifter    exhaustively test ARM shift amounts and boundaries"
+	@echo "  test-data-alu   exhaustively test ARM data-processing ALU classes"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -61,6 +64,8 @@ lint: spec
 		--top-module status_registers_tb $(STATUS_RTL_SOURCES) $(STATUS_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module barrel_shifter_tb $(SHIFTER_RTL_SOURCES) $(SHIFTER_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module data_alu_tb $(DATA_ALU_RTL_SOURCES) $(DATA_ALU_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -93,12 +98,18 @@ $(BUILD_DIR)/barrel_shifter/Vbarrel_shifter_tb: $(SHIFTER_RTL_SOURCES) $(SHIFTER
 	$(VERILATOR) $(VERILATOR_COMMON) --timing --Mdir $(BUILD_DIR)/barrel_shifter \
 		--top-module barrel_shifter_tb $(SHIFTER_RTL_SOURCES) $(SHIFTER_TB)
 
+$(BUILD_DIR)/data_alu/Vdata_alu_tb: $(DATA_ALU_RTL_SOURCES) $(DATA_ALU_TB)
+	@mkdir -p $(BUILD_DIR)/data_alu
+	$(VERILATOR) $(VERILATOR_COMMON) --timing --Mdir $(BUILD_DIR)/data_alu \
+		--top-module data_alu_tb $(DATA_ALU_RTL_SOURCES) $(DATA_ALU_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
 	$(BUILD_DIR)/banked_register_file/Vbanked_register_file_tb \
 	$(BUILD_DIR)/status_registers/Vstatus_registers_tb \
-	$(BUILD_DIR)/barrel_shifter/Vbarrel_shifter_tb
+	$(BUILD_DIR)/barrel_shifter/Vbarrel_shifter_tb \
+	$(BUILD_DIR)/data_alu/Vdata_alu_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -121,7 +132,11 @@ test-status-registers: $(BUILD_DIR)/status_registers/Vstatus_registers_tb
 test-shifter: $(BUILD_DIR)/barrel_shifter/Vbarrel_shifter_tb
 	$(BUILD_DIR)/barrel_shifter/Vbarrel_shifter_tb
 
-test-rtl-unit: test-condition test-register-file test-status-registers test-shifter
+test-data-alu: $(BUILD_DIR)/data_alu/Vdata_alu_tb
+	$(BUILD_DIR)/data_alu/Vdata_alu_tb
+
+test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
+	test-data-alu
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v

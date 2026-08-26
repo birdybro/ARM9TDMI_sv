@@ -22,7 +22,7 @@ Status vocabulary:
 | Profile/revision selection | BASELINED | VERIFIED configuration package | VERIFIED for both profiles |
 | ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14, CPSR/SPSR banks) | VERIFIED bank selection, PSR masks, and defined reset fields; PC/instruction semantics not implemented |
 | ARM condition evaluation | BASELINED | VERIFIED | VERIFIED (256 combinations) |
-| ARM instruction set | PARTIAL | PARTIAL (condition and barrel-shifter primitives) | VERIFIED shifter amounts/boundaries; instruction decode/execute not implemented |
+| ARM instruction set | PARTIAL | PARTIAL (condition, shifter, and data-ALU primitives) | VERIFIED all ALU opcodes and shifter boundaries; instruction decode/execute not implemented |
 | Thumb instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Exceptions and aborts | PARTIAL | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Five-stage pipelines | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-DATA-ALU-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "The ARM data-processing ALU implements all 16 opcode operations, with TST, TEQ, CMP, and CMN suppressing the general-purpose destination write.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.4 Table A3-2; §A4.1"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_isa_pkg.sv", "rtl/arm9_data_alu.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_alu_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-DATA-FLAGS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "Data-processing flag results set N and Z from the result; logical operations take C from the shifter and preserve V; arithmetic operations set C to carry or NOT-borrow and V to signed overflow.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.5.2; §A4.1 individual operation pseudocode"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_alu.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_alu_tb.sv"]}
+    }
+  ]
+}
