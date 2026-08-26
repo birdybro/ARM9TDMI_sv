@@ -68,6 +68,9 @@ MISC_TRANSFER_COMPLETE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_misc_load_data_format.sv rtl/arm9_misc_transfer_complete.sv
 DOUBLEWORD_TRANSFER_DECODE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_doubleword_transfer_decode.sv
+DOUBLEWORD_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
+	rtl/arm9_condition_eval.sv rtl/arm9_doubleword_transfer_decode.sv \
+	rtl/arm9_doubleword_transfer_prepare.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
@@ -102,6 +105,7 @@ MISC_TRANSFER_PREPARE_TB := tb/unit/misc_transfer_prepare_tb.sv
 MISC_LOAD_DATA_FORMAT_TB := tb/unit/misc_load_data_format_tb.sv
 MISC_TRANSFER_COMPLETE_TB := tb/unit/misc_transfer_complete_tb.sv
 DOUBLEWORD_TRANSFER_DECODE_TB := tb/unit/doubleword_transfer_decode_tb.sv
+DOUBLEWORD_TRANSFER_PREPARE_TB := tb/unit/doubleword_transfer_prepare_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
@@ -117,7 +121,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-load-data-align test-single-load-complete test-single-store-complete \
 	test-address-mode3 test-misc-transfer-prepare test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
-	test-formal synth \
+	test-doubleword-transfer-prepare test-formal synth \
 	regression clean
 
 all: test
@@ -161,6 +165,7 @@ help:
 	@echo "  test-misc-load-data-format test LDRH/LDRSB/LDRSH extension"
 	@echo "  test-misc-transfer-complete test miscellaneous commit and abort intent"
 	@echo "  test-doubleword-transfer-decode test profile-specific LDRD/STRD decode"
+	@echo "  test-doubleword-transfer-prepare test conditioned LDRD/STRD descriptor"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -270,6 +275,10 @@ lint: spec
 		--top-module doubleword_transfer_decode_tb \
 		$(DOUBLEWORD_TRANSFER_DECODE_RTL_SOURCES) \
 		$(DOUBLEWORD_TRANSFER_DECODE_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module doubleword_transfer_prepare_tb \
+		$(DOUBLEWORD_TRANSFER_PREPARE_RTL_SOURCES) \
+		$(DOUBLEWORD_TRANSFER_PREPARE_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -519,6 +528,15 @@ $(BUILD_DIR)/doubleword_transfer_decode/Vdoubleword_transfer_decode_tb: \
 		$(DOUBLEWORD_TRANSFER_DECODE_RTL_SOURCES) \
 		$(DOUBLEWORD_TRANSFER_DECODE_TB)
 
+$(BUILD_DIR)/doubleword_transfer_prepare/Vdoubleword_transfer_prepare_tb: \
+	$(DOUBLEWORD_TRANSFER_PREPARE_RTL_SOURCES) $(DOUBLEWORD_TRANSFER_PREPARE_TB)
+	@mkdir -p $(BUILD_DIR)/doubleword_transfer_prepare
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/doubleword_transfer_prepare \
+		--top-module doubleword_transfer_prepare_tb \
+		$(DOUBLEWORD_TRANSFER_PREPARE_RTL_SOURCES) \
+		$(DOUBLEWORD_TRANSFER_PREPARE_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
@@ -552,7 +570,8 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb \
 	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb \
 	$(BUILD_DIR)/misc_transfer_complete/Vmisc_transfer_complete_tb \
-	$(BUILD_DIR)/doubleword_transfer_decode/Vdoubleword_transfer_decode_tb
+	$(BUILD_DIR)/doubleword_transfer_decode/Vdoubleword_transfer_decode_tb \
+	$(BUILD_DIR)/doubleword_transfer_prepare/Vdoubleword_transfer_prepare_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -659,6 +678,9 @@ test-misc-transfer-complete: $(BUILD_DIR)/misc_transfer_complete/Vmisc_transfer_
 test-doubleword-transfer-decode: $(BUILD_DIR)/doubleword_transfer_decode/Vdoubleword_transfer_decode_tb
 	$(BUILD_DIR)/doubleword_transfer_decode/Vdoubleword_transfer_decode_tb
 
+test-doubleword-transfer-prepare: $(BUILD_DIR)/doubleword_transfer_prepare/Vdoubleword_transfer_prepare_tb
+	$(BUILD_DIR)/doubleword_transfer_prepare/Vdoubleword_transfer_prepare_tb
+
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
 	test-data-alu test-immediate test-data-decoder test-data-execute test-pc \
 	test-arm-branch test-multiplier-timing test-multiply-decoder \
@@ -669,7 +691,8 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-single-transfer-prepare test-store-data-select test-load-data-align \
 	test-single-load-complete test-single-store-complete test-address-mode3 \
 	test-misc-transfer-prepare test-misc-load-data-format \
-	test-misc-transfer-complete test-doubleword-transfer-decode
+	test-misc-transfer-complete test-doubleword-transfer-decode \
+	test-doubleword-transfer-prepare
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-ARM-DOUBLEWORD-PREPARE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A valid condition-passing LDRD/STRD emits a two-word transaction descriptor at effective_address and effective_address+4, with read/write direction, both STRD source values, and pending Addressing Mode 3 base writeback. This descriptor does not constrain the architecturally unspecified time order of the two accesses.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.26 LDRD operation/time order; §A4.1.102 STRD operation/time order"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_prepare_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-DOUBLEWORD-ALIGNMENT-GATE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A condition-passing unaligned ARM946E-S LDRD/STRD is reported as UNPREDICTABLE and emits no constrained transaction descriptor; a failed condition performs no access.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.2; §A4.1.26 LDRD alignment; §A4.1.102 STRD alignment"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_prepare_tb.sv"]}
+    }
+  ]
+}
