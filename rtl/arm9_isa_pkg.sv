@@ -58,4 +58,11 @@ package arm9_isa_pkg;
     ARM9_SATURATING_QDADD = 2'b10,
     ARM9_SATURATING_QDSUB = 2'b11
   } arm9_saturating_kind_e;
+
+  typedef enum logic [1:0] {
+    ARM9_MISC_TRANSFER_STRH,
+    ARM9_MISC_TRANSFER_LDRH,
+    ARM9_MISC_TRANSFER_LDRSB,
+    ARM9_MISC_TRANSFER_LDRSH
+  } arm9_misc_transfer_kind_e;
 endpackage

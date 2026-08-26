@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-ADDRMODE3-CONTROL-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "The common Addressing Mode 3 encoding distinguishes STRH, LDRH, LDRSB, and LDRSH from the unsigned-byte and ARMv5TE doubleword extension encodings using L, S, and H.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.3.1 Encoding"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode3.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode3_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-ADDRMODE3-CALC-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "Addressing Mode 3 forms add or subtract an immediate eight-bit or unshifted register offset; pre-index forms use the adjusted address, post-index forms access the original base, and pre-index W or every post-index form requests writeback.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.3.2-§A5.3.7"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode3.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode3_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-ADDRMODE3-CONSTRAINTS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "For these pre-ARMv6 cores, Addressing Mode 3 reports the documented reserved-bit, R15, post-index-W, and writeback register-collision cases as UNPREDICTABLE encodings.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A5.3.1-§A5.3.7 notes and operand restrictions"},
+        {"source": "DDI0100I", "locator": "§A4.1.28-§A4.1.30; §A4.1.104"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode3.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode3_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-ADDRMODE3-ALIGNMENT-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "Prior to ARMv6, a non-halfword-aligned LDRH, LDRSH, or STRH access is UNPREDICTABLE, while LDRSB has no halfword-alignment requirement.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.28-§A4.1.30; §A4.1.104 alignment"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode3.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode3_tb.sv"]}
+    }
+  ]
+}
