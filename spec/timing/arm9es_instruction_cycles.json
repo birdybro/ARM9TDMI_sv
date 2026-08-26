@@ -3,7 +3,7 @@
   "table_id": "ARM946ES-TIMING-TABLE-001",
   "profiles": ["ARM9_PROFILE_ARM946ES"],
   "category": "instruction_timing",
-  "source_refs": [{"source": "DDI0165B", "locator": "§8.1 Tables 8-1 and 8-2; §8.3 Table 8-4; §8.5 Table 8-6; §8.7 Table 8-8; §8.8 Tables 8-9 and 8-10; §8.12 Tables 8-18 and 8-19; §8.13 Table 8-22; §8.14 Table 8-23; §8.15 Table 8-24; §8.16 LDRD; §8.17 STRD; §8.18 Table 8-25; §8.20 Table 8-27"}],
+  "source_refs": [{"source": "DDI0165B", "locator": "§8.1 Tables 8-1 and 8-2; §8.3 Table 8-4; §8.5 Table 8-6; §8.7 Table 8-8; §8.8 Tables 8-9 and 8-10; §8.12 Tables 8-18 and 8-19; §8.13 Table 8-22; §8.14 Table 8-23; §8.15 Table 8-24; §8.16 LDRD; §8.17 STRD; §8.18 Table 8-25; §8.19 Table 8-26; §8.20 Table 8-27"}],
   "symbols": {
     "b": "coprocessor busy-wait cycles",
     "n": "number of transferred words",
@@ -67,8 +67,8 @@
     {"id": "ARM946ES-TIMING-SMLALXY-001", "operation": "SMLALxy", "qualification": "normal case", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "2I"},
     {"id": "ARM946ES-TIMING-SMLALXY-002", "operation": "SMLALxy", "qualification": "next instruction consumes RdHi in first Execute or Memory cycle", "cycles": "3", "instruction_bus": "1S+2I", "data_bus": "3I"}
   ],
-  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv", "rtl/arm9_data_operation_timing.sv", "rtl/arm9_pipeline_refill_timing.sv", "rtl/arm9_single_transfer_timing.sv", "rtl/arm9_block_transfer_timing.sv", "rtl/arm9_doubleword_transfer_timing.sv", "rtl/arm9_swap_timing.sv"]},
-  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv", "tb/unit/data_operation_timing_tb.sv", "tb/unit/pipeline_refill_timing_tb.sv", "tb/unit/single_transfer_timing_tb.sv", "tb/unit/block_transfer_timing_tb.sv", "tb/unit/doubleword_transfer_timing_tb.sv", "tb/unit/swap_timing_tb.sv"]},
+  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv", "rtl/arm9_data_operation_timing.sv", "rtl/arm9_pipeline_refill_timing.sv", "rtl/arm9_single_transfer_timing.sv", "rtl/arm9_block_transfer_timing.sv", "rtl/arm9_doubleword_transfer_timing.sv", "rtl/arm9_pld_timing.sv", "rtl/arm9_swap_timing.sv"]},
+  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv", "tb/unit/data_operation_timing_tb.sv", "tb/unit/pipeline_refill_timing_tb.sv", "tb/unit/single_transfer_timing_tb.sv", "tb/unit/block_transfer_timing_tb.sv", "tb/unit/doubleword_transfer_timing_tb.sv", "tb/unit/pld_timing_tb.sv", "tb/unit/swap_timing_tb.sv"]},
   "verified_rows": [
     "ARM946ES-TIMING-DP-001",
     "ARM946ES-TIMING-DP-002",
@@ -94,6 +94,7 @@
     "ARM946ES-TIMING-SWP-001",
     "ARM946ES-TIMING-SWP-002",
     "ARM946ES-TIMING-SWP-003",
+    "ARM946ES-TIMING-PLD-001",
     "ARM946ES-TIMING-MRS-001",
     "ARM946ES-TIMING-MSR-001",
     "ARM946ES-TIMING-MSR-002"
@@ -108,5 +109,5 @@
       "resolution": "Use 1N+1I for ARM946E-S because the signal-by-signal processor timing table is more specific than the chapter summary; retain DDI0180A Table 7-2's 1S+1I for ARM9TDMI because no equally direct ARM9TDMI timing table was found"
     }
   ],
-  "notes": "Unlike ARM9TDMI Rev 3, ARM9E-S timing has no operand-value early-termination variable. Dependency and flag-setting qualifications select fixed counts. Data-operation, single/block/doubleword-transfer, swap, branch/exception refill, and MRS/MSR cycle counts, aggregate bus classes, and the applicable detailed per-cycle I/N/S order are verified."
+  "notes": "Unlike ARM9TDMI Rev 3, ARM9E-S timing has no operand-value early-termination variable. Dependency and flag-setting qualifications select fixed counts. Data-operation, single/block/doubleword-transfer, PLD, swap, branch/exception refill, and MRS/MSR cycle counts, aggregate bus classes, and the applicable detailed per-cycle I/N/S order are verified."
 }
