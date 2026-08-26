@@ -43,6 +43,10 @@ SATURATING_DECODER_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_isa_pkg.sv rtl/arm9_saturating_decoder.sv
 SATURATING_ALU_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9e_saturating_alu.sv
+SATURATING_EXECUTE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
+	rtl/arm9_isa_pkg.sv rtl/arm9_condition_eval.sv \
+	rtl/arm9_saturating_decoder.sv rtl/arm9e_saturating_alu.sv \
+	rtl/arm9_saturating_execute.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
@@ -65,6 +69,7 @@ DSP_MULTIPLY_EXECUTE_TB := tb/unit/dsp_multiply_execute_tb.sv
 CLZ_EXECUTE_TB := tb/unit/clz_execute_tb.sv
 SATURATING_DECODER_TB := tb/unit/saturating_decoder_tb.sv
 SATURATING_ALU_TB := tb/unit/saturating_alu_tb.sv
+SATURATING_EXECUTE_TB := tb/unit/saturating_execute_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
@@ -75,8 +80,8 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-multiplier-timing test-multiply-decoder test-common-multiply-alu \
 	test-common-multiply-execute test-dsp-multiply-decoder \
 	test-dsp-multiply-alu test-dsp-multiply-execute test-clz-execute \
-	test-saturating-decoder test-saturating-alu test-formal synth regression \
-	clean
+	test-saturating-decoder test-saturating-alu test-saturating-execute \
+	test-formal synth regression clean
 
 all: test
 
@@ -107,6 +112,7 @@ help:
 	@echo "  test-clz-execute test profile-specific ARM CLZ execution"
 	@echo "  test-saturating-decoder test ARMv5TE saturating decode"
 	@echo "  test-saturating-alu test ARMv5TE saturating arithmetic"
+	@echo "  test-saturating-execute test integrated saturating execution"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -179,6 +185,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module saturating_alu_tb \
 		$(SATURATING_ALU_RTL_SOURCES) $(SATURATING_ALU_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module saturating_execute_tb \
+		$(SATURATING_EXECUTE_RTL_SOURCES) $(SATURATING_EXECUTE_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -331,6 +340,14 @@ $(BUILD_DIR)/saturating_alu/Vsaturating_alu_tb: \
 		--top-module saturating_alu_tb \
 		$(SATURATING_ALU_RTL_SOURCES) $(SATURATING_ALU_TB)
 
+$(BUILD_DIR)/saturating_execute/Vsaturating_execute_tb: \
+	$(SATURATING_EXECUTE_RTL_SOURCES) $(SATURATING_EXECUTE_TB)
+	@mkdir -p $(BUILD_DIR)/saturating_execute
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/saturating_execute \
+		--top-module saturating_execute_tb \
+		$(SATURATING_EXECUTE_RTL_SOURCES) $(SATURATING_EXECUTE_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
@@ -352,7 +369,8 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/dsp_multiply_execute/Vdsp_multiply_execute_tb \
 	$(BUILD_DIR)/clz_execute/Vclz_execute_tb \
 	$(BUILD_DIR)/saturating_decoder/Vsaturating_decoder_tb \
-	$(BUILD_DIR)/saturating_alu/Vsaturating_alu_tb
+	$(BUILD_DIR)/saturating_alu/Vsaturating_alu_tb \
+	$(BUILD_DIR)/saturating_execute/Vsaturating_execute_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -423,13 +441,16 @@ test-saturating-decoder: $(BUILD_DIR)/saturating_decoder/Vsaturating_decoder_tb
 test-saturating-alu: $(BUILD_DIR)/saturating_alu/Vsaturating_alu_tb
 	$(BUILD_DIR)/saturating_alu/Vsaturating_alu_tb
 
+test-saturating-execute: $(BUILD_DIR)/saturating_execute/Vsaturating_execute_tb
+	$(BUILD_DIR)/saturating_execute/Vsaturating_execute_tb
+
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
 	test-data-alu test-immediate test-data-decoder test-data-execute test-pc \
 	test-arm-branch test-multiplier-timing test-multiply-decoder \
 	test-common-multiply-alu test-common-multiply-execute \
 	test-dsp-multiply-decoder test-dsp-multiply-alu \
 	test-dsp-multiply-execute test-clz-execute test-saturating-decoder \
-	test-saturating-alu
+	test-saturating-alu test-saturating-execute
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v

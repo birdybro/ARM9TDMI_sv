@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-ARM-QADD-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "Saturating arithmetic execution composes ARM condition evaluation with valid decode and emits the selected result write and sticky-Q set request only when the instruction executes; it emits no NZCV write.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2 Condition field; §A4.1.46 QADD; §A4.1.50 QDADD; §A4.1.51 QDSUB; §A4.1.52 QSUB"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_saturating_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/saturating_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-NO-ARM-QADD-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "profiles",
+      "statement": "The ARM9TDMI profile cannot emit a destination or Q-flag write for an ARMv5TE saturating arithmetic encoding, regardless of its condition result or arithmetic operands.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§1.1 ARMv4T architecture"}, {"source": "DDI0100I", "locator": "§A4.1.46, §A4.1.50-§A4.1.52 Architecture version"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_saturating_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/saturating_execute_tb.sv"]}
+    }
+  ]
+}
