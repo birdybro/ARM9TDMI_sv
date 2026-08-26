@@ -67,6 +67,8 @@ BLOCK_PC_COMPLETE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_block_pc_complete.sv
 EXCEPTION_ENTRY_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_arch_pkg.sv rtl/arm9_exception_entry.sv
+EXCEPTION_ARBITER_RTL_SOURCES := rtl/arm9_arch_pkg.sv \
+	rtl/arm9_exception_arbiter.sv
 MISC_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_address_mode3.sv \
 	rtl/arm9_misc_transfer_prepare.sv
@@ -120,6 +122,7 @@ ADDRESS_MODE4_TB := tb/unit/address_mode4_tb.sv
 BLOCK_TRANSFER_PREPARE_TB := tb/unit/block_transfer_prepare_tb.sv
 BLOCK_PC_COMPLETE_TB := tb/unit/block_pc_complete_tb.sv
 EXCEPTION_ENTRY_TB := tb/unit/exception_entry_tb.sv
+EXCEPTION_ARBITER_TB := tb/unit/exception_arbiter_tb.sv
 MISC_TRANSFER_PREPARE_TB := tb/unit/misc_transfer_prepare_tb.sv
 MISC_LOAD_DATA_FORMAT_TB := tb/unit/misc_load_data_format_tb.sv
 MISC_TRANSFER_COMPLETE_TB := tb/unit/misc_transfer_complete_tb.sv
@@ -145,6 +148,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-address-mode3 test-address-mode4 test-block-transfer-prepare \
 	test-block-pc-complete \
 	test-exception-entry \
+	test-exception-arbiter \
 	test-misc-transfer-prepare \
 	test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
@@ -193,6 +197,7 @@ help:
 	@echo "  test-block-transfer-prepare test conditioned LDM/STM descriptor"
 	@echo "  test-block-pc-complete test profile LDM-to-PC and SPSR return"
 	@echo "  test-exception-entry test all architectural exception entry effects"
+	@echo "  test-exception-arbiter test fixed priority and I/F masking"
 	@echo "  test-misc-transfer-prepare test common halfword/signed request intent"
 	@echo "  test-misc-load-data-format test LDRH/LDRSB/LDRSH extension"
 	@echo "  test-misc-transfer-complete test miscellaneous commit and abort intent"
@@ -310,6 +315,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module exception_entry_tb \
 		$(EXCEPTION_ENTRY_RTL_SOURCES) $(EXCEPTION_ENTRY_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module exception_arbiter_tb \
+		$(EXCEPTION_ARBITER_RTL_SOURCES) $(EXCEPTION_ARBITER_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module misc_transfer_prepare_tb \
 		$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
@@ -588,6 +596,14 @@ $(BUILD_DIR)/exception_entry/Vexception_entry_tb: \
 		--top-module exception_entry_tb \
 		$(EXCEPTION_ENTRY_RTL_SOURCES) $(EXCEPTION_ENTRY_TB)
 
+$(BUILD_DIR)/exception_arbiter/Vexception_arbiter_tb: \
+	$(EXCEPTION_ARBITER_RTL_SOURCES) $(EXCEPTION_ARBITER_TB)
+	@mkdir -p $(BUILD_DIR)/exception_arbiter
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/exception_arbiter \
+		--top-module exception_arbiter_tb \
+		$(EXCEPTION_ARBITER_RTL_SOURCES) $(EXCEPTION_ARBITER_TB)
+
 $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb: \
 	$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
 	@mkdir -p $(BUILD_DIR)/misc_transfer_prepare
@@ -697,6 +713,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/block_transfer_prepare/Vblock_transfer_prepare_tb \
 	$(BUILD_DIR)/block_pc_complete/Vblock_pc_complete_tb \
 	$(BUILD_DIR)/exception_entry/Vexception_entry_tb \
+	$(BUILD_DIR)/exception_arbiter/Vexception_arbiter_tb \
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb \
 	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb \
 	$(BUILD_DIR)/misc_transfer_complete/Vmisc_transfer_complete_tb \
@@ -813,6 +830,9 @@ test-block-pc-complete: $(BUILD_DIR)/block_pc_complete/Vblock_pc_complete_tb
 test-exception-entry: $(BUILD_DIR)/exception_entry/Vexception_entry_tb
 	$(BUILD_DIR)/exception_entry/Vexception_entry_tb
 
+test-exception-arbiter: $(BUILD_DIR)/exception_arbiter/Vexception_arbiter_tb
+	$(BUILD_DIR)/exception_arbiter/Vexception_arbiter_tb
+
 test-misc-transfer-prepare: $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 
@@ -850,7 +870,7 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-single-transfer-prepare test-store-data-select test-load-data-align \
 	test-single-load-complete test-single-store-complete test-address-mode3 \
 	test-address-mode4 test-block-transfer-prepare test-block-pc-complete \
-	test-exception-entry \
+	test-exception-entry test-exception-arbiter \
 	test-misc-transfer-prepare test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
 	test-doubleword-transfer-prepare test-doubleword-transfer-complete \

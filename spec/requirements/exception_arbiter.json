@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-EXCEPTION-PRIORITY-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "exceptions",
+      "statement": "When simultaneously eligible exceptions are presented at an architectural recognition point, selection priority is Reset, precise Data Abort, FIQ, IRQ, Prefetch Abort, then Undefined Instruction or SWI. Concurrent Undefined and SWI requests are flagged as an impossible decode combination rather than assigned an invented relative priority.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.6.10 Table A2-1"},
+        {"source": "DDI0165B", "locator": "§2.9.12 Exception priorities"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_exception_arbiter.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/exception_arbiter_tb.sv"]}
+    },
+    {
+      "id": "COMMON-INTERRUPT-MASKING-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "exceptions",
+      "statement": "CPSR.F masks FIQ and CPSR.I masks IRQ without masking Reset, aborts, Undefined Instruction, or SWI; a masked interrupt can remain pending while a lower-priority unmasked exception is selected.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.6.8 IRQ; §A2.6.9 FIQ"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_exception_arbiter.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/exception_arbiter_tb.sv"]}
+    }
+  ]
+}
