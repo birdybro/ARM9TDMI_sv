@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-MRS-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A valid condition-passing MRS writes CPSR or the current exception-mode SPSR to its non-PC destination. SPSR access in User or System mode is reported UNPREDICTABLE and emits no constrained register-write intent; a failed condition has no effect.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.38 MRS operation and User mode SPSR note"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_mrs_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/mrs_execute_tb.sv"]}
+    }
+  ]
+}
