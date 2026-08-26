@@ -89,6 +89,9 @@ SINGLE_TRANSFER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_timing_pkg.sv rtl/arm9_single_transfer_timing.sv
 BLOCK_TRANSFER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_timing_pkg.sv rtl/arm9_block_transfer_timing.sv
+DOUBLEWORD_TRANSFER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
+	rtl/arm9_timing_pkg.sv rtl/arm9_block_transfer_timing.sv \
+	rtl/arm9_doubleword_transfer_timing.sv
 SWAP_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_timing_pkg.sv rtl/arm9_swap_timing.sv
 MISC_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
@@ -155,6 +158,8 @@ DATA_OPERATION_TIMING_TB := tb/unit/data_operation_timing_tb.sv
 PIPELINE_REFILL_TIMING_TB := tb/unit/pipeline_refill_timing_tb.sv
 SINGLE_TRANSFER_TIMING_TB := tb/unit/single_transfer_timing_tb.sv
 BLOCK_TRANSFER_TIMING_TB := tb/unit/block_transfer_timing_tb.sv
+DOUBLEWORD_TRANSFER_TIMING_TB := \
+	tb/unit/doubleword_transfer_timing_tb.sv
 SWAP_TIMING_TB := tb/unit/swap_timing_tb.sv
 MISC_TRANSFER_PREPARE_TB := tb/unit/misc_transfer_prepare_tb.sv
 MISC_LOAD_DATA_FORMAT_TB := tb/unit/misc_load_data_format_tb.sv
@@ -192,6 +197,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-pipeline-refill-timing \
 	test-single-transfer-timing \
 	test-block-transfer-timing \
+	test-doubleword-transfer-timing \
 	test-swap-timing \
 	test-misc-transfer-prepare \
 	test-misc-load-data-format \
@@ -252,6 +258,7 @@ help:
 	@echo "  test-pipeline-refill-timing test branch/exception refill cycles"
 	@echo "  test-single-transfer-timing test profile LDR/STR cycles"
 	@echo "  test-block-transfer-timing test profile LDM/STM cycles"
+	@echo "  test-doubleword-transfer-timing test ARM946E-S LDRD/STRD cycles"
 	@echo "  test-swap-timing test profile SWP cycles and lock window"
 	@echo "  test-misc-transfer-prepare test common halfword/signed request intent"
 	@echo "  test-misc-load-data-format test LDRH/LDRSB/LDRSH extension"
@@ -403,6 +410,10 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module block_transfer_timing_tb \
 		$(BLOCK_TRANSFER_TIMING_RTL_SOURCES) $(BLOCK_TRANSFER_TIMING_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module doubleword_transfer_timing_tb \
+		$(DOUBLEWORD_TRANSFER_TIMING_RTL_SOURCES) \
+		$(DOUBLEWORD_TRANSFER_TIMING_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module swap_timing_tb \
 		$(SWAP_TIMING_RTL_SOURCES) $(SWAP_TIMING_TB)
@@ -772,6 +783,16 @@ $(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb: \
 		--top-module block_transfer_timing_tb \
 		$(BLOCK_TRANSFER_TIMING_RTL_SOURCES) $(BLOCK_TRANSFER_TIMING_TB)
 
+$(BUILD_DIR)/doubleword_transfer_timing/Vdoubleword_transfer_timing_tb: \
+	$(DOUBLEWORD_TRANSFER_TIMING_RTL_SOURCES) \
+	$(DOUBLEWORD_TRANSFER_TIMING_TB)
+	@mkdir -p $(BUILD_DIR)/doubleword_transfer_timing
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/doubleword_transfer_timing \
+		--top-module doubleword_transfer_timing_tb \
+		$(DOUBLEWORD_TRANSFER_TIMING_RTL_SOURCES) \
+		$(DOUBLEWORD_TRANSFER_TIMING_TB)
+
 $(BUILD_DIR)/swap_timing/Vswap_timing_tb: \
 	$(SWAP_TIMING_RTL_SOURCES) $(SWAP_TIMING_TB)
 	@mkdir -p $(BUILD_DIR)/swap_timing
@@ -900,6 +921,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/pipeline_refill_timing/Vpipeline_refill_timing_tb \
 	$(BUILD_DIR)/single_transfer_timing/Vsingle_transfer_timing_tb \
 	$(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb \
+	$(BUILD_DIR)/doubleword_transfer_timing/Vdoubleword_transfer_timing_tb \
 	$(BUILD_DIR)/swap_timing/Vswap_timing_tb \
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb \
 	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb \
@@ -1057,6 +1079,10 @@ test-block-transfer-timing: \
 	$(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb
 	$(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb
 
+test-doubleword-transfer-timing: \
+	$(BUILD_DIR)/doubleword_transfer_timing/Vdoubleword_transfer_timing_tb
+	$(BUILD_DIR)/doubleword_transfer_timing/Vdoubleword_transfer_timing_tb
+
 test-swap-timing: $(BUILD_DIR)/swap_timing/Vswap_timing_tb
 	$(BUILD_DIR)/swap_timing/Vswap_timing_tb
 
@@ -1102,7 +1128,8 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-psr-transfer-decoder test-mrs-execute test-msr-execute \
 	test-psr-transfer-timing test-data-operation-timing \
 	test-pipeline-refill-timing test-single-transfer-timing \
-	test-block-transfer-timing test-swap-timing \
+	test-block-transfer-timing test-doubleword-transfer-timing \
+	test-swap-timing \
 	test-misc-transfer-prepare test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
 	test-doubleword-transfer-prepare test-doubleword-transfer-complete \

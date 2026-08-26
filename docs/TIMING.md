@@ -7,8 +7,8 @@ status are in `spec/timing/arm9tdmi_instruction_cycles.json` and
 
 No integrated processor pipeline exists yet, so the project does not claim whole-core
 cycle accuracy. The current synthesizable timing controllers cover data operations,
-single and block transfers, swaps, branch and synchronous-exception refills, and PSR
-transfers.
+single, block, and ARM946E-S doubleword transfers, swaps, branch and
+synchronous-exception refills, and PSR transfers.
 Each controller exposes the active cycle, total latency, aggregate instruction/data
 bus classes, and a completion pulse. Tests check every active cycle and the completion
 edge for both profiles.
@@ -29,6 +29,8 @@ The currently verified ARM9E-S orders include:
   load-use `I,I,S / N,I,I`; PC load `I,I,N,S,S / N,I,I,I,I`
 - LDM/STM: exact Table 8-23 and Table 8-24 orders for every legal transfer count,
   including final-word interlock and PC refill cases
+- LDRD/STRD: the documented two-register LDM/STM mapping, including the LDRD
+  final-word interlock, with ARM9TDMI profile rejection
 - SWP/SWPB: normal `I,S / N,N`; one-cycle interlock `I,I,S / N,N,I`;
   two-cycle interlock `I,I,I,S / N,N,I,I`, with the atomic read, write, and
   DLOCK window identified independently of the aggregate bus classes
