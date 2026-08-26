@@ -7,7 +7,8 @@ status are in `spec/timing/arm9tdmi_instruction_cycles.json` and
 
 No integrated processor pipeline exists yet, so the project does not claim whole-core
 cycle accuracy. The current synthesizable timing controllers cover data operations,
-single and block transfers, branch and synchronous-exception refills, and PSR transfers.
+single and block transfers, swaps, branch and synchronous-exception refills, and PSR
+transfers.
 Each controller exposes the active cycle, total latency, aggregate instruction/data
 bus classes, and a completion pulse. Tests check every active cycle and the completion
 edge for both profiles.
@@ -28,6 +29,9 @@ The currently verified ARM9E-S orders include:
   load-use `I,I,S / N,I,I`; PC load `I,I,N,S,S / N,I,I,I,I`
 - LDM/STM: exact Table 8-23 and Table 8-24 orders for every legal transfer count,
   including final-word interlock and PC refill cases
+- SWP/SWPB: normal `I,S / N,N`; one-cycle interlock `I,I,S / N,N,I`;
+  two-cycle interlock `I,I,I,S / N,N,I,I`, with the atomic read, write, and
+  DLOCK window identified independently of the aggregate bus classes
 - B/BL/BX/BLX and exception entry: `N,S,S / I,I,I`
 - MRS: `I,S`; non-flags-only MSR: `I,I,S`
 
@@ -48,10 +52,25 @@ is directly applicable and no detailed ARM9TDMI table resolving it was found. Th
 decision is encoded in the specification database and guarded by
 `tests/timing/test_timing_spec.py`.
 
+## DDI0180A SWP data-bus conflict
+
+DDI0180A also conflicts internally on the normal SWP data-bus classification:
+
+- §7.1 Table 7-2 gives `2N` alongside the instruction's two processor cycles.
+- §7.1 Table 7-3 gives `1N+1S` from the data-bus perspective.
+- The same pair of entries appears in ARM9TDMI Rev 0 and Rev 2 manuals.
+
+The ARM9TDMI profile uses `2N`. This matches the cycle-aligned Table 7-2, the
+same-address read-to-write transition, and the later ARM9E-S signal-level Table 8-25.
+Because DDI0180A does not show the complete per-cycle SWP signal schedule, its
+chronological bus-class outputs remain `UNSPECIFIED`; the atomic read then write order
+and DLOCK window are represented separately. The decision and cross-revision check
+are machine-readable and covered by the timing-specification tests.
+
 ## Remaining work
 
-Swaps, multiply execution sequences, coprocessor operations, wait-state insertion,
-the ARM9TDMI Harvard interfaces, ARM946E-S cache/TCM/write
+Multiply execution sequences, coprocessor operations, wait-state insertion, the
+ARM9TDMI Harvard interfaces, ARM946E-S cache/TCM/write
 buffer behavior, AHB transactions, debug, reset, interrupt recognition, and a real
 five-stage pipeline are not yet cycle-verified. See `docs/ACCURACY.md` for the full
 status matrix.

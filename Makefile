@@ -89,6 +89,8 @@ SINGLE_TRANSFER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_timing_pkg.sv rtl/arm9_single_transfer_timing.sv
 BLOCK_TRANSFER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_timing_pkg.sv rtl/arm9_block_transfer_timing.sv
+SWAP_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
+	rtl/arm9_timing_pkg.sv rtl/arm9_swap_timing.sv
 MISC_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_address_mode3.sv \
 	rtl/arm9_misc_transfer_prepare.sv
@@ -153,6 +155,7 @@ DATA_OPERATION_TIMING_TB := tb/unit/data_operation_timing_tb.sv
 PIPELINE_REFILL_TIMING_TB := tb/unit/pipeline_refill_timing_tb.sv
 SINGLE_TRANSFER_TIMING_TB := tb/unit/single_transfer_timing_tb.sv
 BLOCK_TRANSFER_TIMING_TB := tb/unit/block_transfer_timing_tb.sv
+SWAP_TIMING_TB := tb/unit/swap_timing_tb.sv
 MISC_TRANSFER_PREPARE_TB := tb/unit/misc_transfer_prepare_tb.sv
 MISC_LOAD_DATA_FORMAT_TB := tb/unit/misc_load_data_format_tb.sv
 MISC_TRANSFER_COMPLETE_TB := tb/unit/misc_transfer_complete_tb.sv
@@ -189,6 +192,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-pipeline-refill-timing \
 	test-single-transfer-timing \
 	test-block-transfer-timing \
+	test-swap-timing \
 	test-misc-transfer-prepare \
 	test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
@@ -248,6 +252,7 @@ help:
 	@echo "  test-pipeline-refill-timing test branch/exception refill cycles"
 	@echo "  test-single-transfer-timing test profile LDR/STR cycles"
 	@echo "  test-block-transfer-timing test profile LDM/STM cycles"
+	@echo "  test-swap-timing test profile SWP cycles and lock window"
 	@echo "  test-misc-transfer-prepare test common halfword/signed request intent"
 	@echo "  test-misc-load-data-format test LDRH/LDRSB/LDRSH extension"
 	@echo "  test-misc-transfer-complete test miscellaneous commit and abort intent"
@@ -398,6 +403,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module block_transfer_timing_tb \
 		$(BLOCK_TRANSFER_TIMING_RTL_SOURCES) $(BLOCK_TRANSFER_TIMING_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module swap_timing_tb \
+		$(SWAP_TIMING_RTL_SOURCES) $(SWAP_TIMING_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module misc_transfer_prepare_tb \
 		$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
@@ -764,6 +772,14 @@ $(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb: \
 		--top-module block_transfer_timing_tb \
 		$(BLOCK_TRANSFER_TIMING_RTL_SOURCES) $(BLOCK_TRANSFER_TIMING_TB)
 
+$(BUILD_DIR)/swap_timing/Vswap_timing_tb: \
+	$(SWAP_TIMING_RTL_SOURCES) $(SWAP_TIMING_TB)
+	@mkdir -p $(BUILD_DIR)/swap_timing
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/swap_timing \
+		--top-module swap_timing_tb \
+		$(SWAP_TIMING_RTL_SOURCES) $(SWAP_TIMING_TB)
+
 $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb: \
 	$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
 	@mkdir -p $(BUILD_DIR)/misc_transfer_prepare
@@ -884,6 +900,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/pipeline_refill_timing/Vpipeline_refill_timing_tb \
 	$(BUILD_DIR)/single_transfer_timing/Vsingle_transfer_timing_tb \
 	$(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb \
+	$(BUILD_DIR)/swap_timing/Vswap_timing_tb \
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb \
 	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb \
 	$(BUILD_DIR)/misc_transfer_complete/Vmisc_transfer_complete_tb \
@@ -1040,6 +1057,9 @@ test-block-transfer-timing: \
 	$(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb
 	$(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb
 
+test-swap-timing: $(BUILD_DIR)/swap_timing/Vswap_timing_tb
+	$(BUILD_DIR)/swap_timing/Vswap_timing_tb
+
 test-misc-transfer-prepare: $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 
@@ -1082,7 +1102,7 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-psr-transfer-decoder test-mrs-execute test-msr-execute \
 	test-psr-transfer-timing test-data-operation-timing \
 	test-pipeline-refill-timing test-single-transfer-timing \
-	test-block-transfer-timing \
+	test-block-transfer-timing test-swap-timing \
 	test-misc-transfer-prepare test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
 	test-doubleword-transfer-prepare test-doubleword-transfer-complete \

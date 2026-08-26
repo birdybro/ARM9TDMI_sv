@@ -3,7 +3,7 @@
   "table_id": "ARM9TDMI-TIMING-TABLE-001",
   "profiles": ["ARM9_PROFILE_ARM9TDMI"],
   "category": "instruction_timing",
-  "source_refs": [{"source": "DDI0180A", "locator": "§7.1 Tables 7-1 through 7-3; §7.2.4 Figure 7-4"}],
+  "source_refs": [{"source": "DDI0180A", "locator": "§7.1 Tables 7-1 through 7-3; §7.2.4 Figure 7-4; Appendix A Table A-2 DLOCK"}],
   "symbols": {
     "b": "coprocessor busy-wait cycles",
     "m": "multiplier early-termination value from 1 through 4",
@@ -59,8 +59,8 @@
       {"m": 4, "predicate": "otherwise"}
     ]}
   ],
-  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv", "rtl/arm9_data_operation_timing.sv", "rtl/arm9_pipeline_refill_timing.sv", "rtl/arm9_single_transfer_timing.sv", "rtl/arm9_block_transfer_timing.sv"]},
-  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv", "tb/unit/data_operation_timing_tb.sv", "tb/unit/pipeline_refill_timing_tb.sv", "tb/unit/single_transfer_timing_tb.sv", "tb/unit/block_transfer_timing_tb.sv"]},
+  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv", "rtl/arm9_data_operation_timing.sv", "rtl/arm9_pipeline_refill_timing.sv", "rtl/arm9_single_transfer_timing.sv", "rtl/arm9_block_transfer_timing.sv", "rtl/arm9_swap_timing.sv"]},
+  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv", "tb/unit/data_operation_timing_tb.sv", "tb/unit/pipeline_refill_timing_tb.sv", "tb/unit/single_transfer_timing_tb.sv", "tb/unit/block_transfer_timing_tb.sv", "tb/unit/swap_timing_tb.sv"]},
   "verified_rows": [
     "ARM9TDMI-TIMING-DP-001",
     "ARM9TDMI-TIMING-DP-002",
@@ -79,9 +79,21 @@
     "ARM9TDMI-TIMING-LDM-004",
     "ARM9TDMI-TIMING-STM-001",
     "ARM9TDMI-TIMING-STM-002",
+    "ARM9TDMI-TIMING-SWP-001",
+    "ARM9TDMI-TIMING-SWP-002",
     "ARM9TDMI-TIMING-MRS-001",
     "ARM9TDMI-TIMING-MSR-001",
     "ARM9TDMI-TIMING-MSR-002"
   ],
-  "notes": "Data-operation, single/block-transfer, branch/exception refill, and MRS/MSR cycle counts and aggregate instruction/data bus class counts are verified. The final-word LDM interlock omitted by Table 7-2 is derived from §7.2.4 and Figure 7-4. DDI0180A does not publish complete chronological instruction/data-bus classifications for the multi-cycle rows, so those per-cycle classes remain explicitly UNSPECIFIED rather than inferred from ARM9E-S."
+  "source_conflicts": [
+    {
+      "id": "ARM9TDMI-TIMING-SWP-DATABUS-001",
+      "subject": "normal SWP data-bus classification",
+      "instruction_summary_source": "DDI0180A §7.1 Table 7-2 prints 2N",
+      "data_summary_source": "DDI0180A §7.1 Table 7-3 prints 1N+1S",
+      "revision_check": "The same conflicting entries occur in ARM9TDMI Rev 0 DDI0091A and Rev 2 DDI0168A",
+      "resolution": "Use 2N because Table 7-2 gives the instruction's cycle-aligned bus activity, the two transfers use the same address with a read-to-write direction change, and the later ARM9E-S detailed Table 8-25 independently shows two N cycles; retain exact ARM9TDMI chronological order as unspecified"
+    }
+  ],
+  "notes": "Data-operation, single/block-transfer, swap, branch/exception refill, and MRS/MSR cycle counts and aggregate instruction/data bus class counts are verified. The final-word LDM interlock omitted by Table 7-2 is derived from §7.2.4 and Figure 7-4. DDI0180A does not publish complete chronological instruction/data-bus classifications for the multi-cycle rows, so those per-cycle classes remain explicitly UNSPECIFIED rather than inferred from ARM9E-S."
 }

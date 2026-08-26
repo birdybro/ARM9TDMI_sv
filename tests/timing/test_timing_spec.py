@@ -25,7 +25,7 @@ class TimingSpecificationTest(unittest.TestCase):
     def test_arm9es_summary_has_every_documented_qualification(self) -> None:
         # REQ: ARM946ES-TIMING-TABLE-001
         table = load_timing("arm9es_instruction_cycles.json")
-        self.assertEqual(len(table["rows"]), 52)
+        self.assertEqual(len(table["rows"]), 53)
         self.assertNotIn("m", table["symbols"])
 
     def test_profiles_do_not_share_multiplier_timing_model(self) -> None:
@@ -56,6 +56,22 @@ class TimingSpecificationTest(unittest.TestCase):
         resolution = conflicts["ARM946ES-TIMING-LDM-DATABUS-001"]
         self.assertIn("Table 8-23", resolution["detailed_source"])
         self.assertIn("more specific", resolution["resolution"])
+
+    def test_arm9tdmi_swap_bus_conflict_is_recorded(self) -> None:
+        # REQ: ARM9TDMI-TIMING-SWP-001
+        table = load_timing("arm9tdmi_instruction_cycles.json")
+        self.assertEqual(
+            row_by_id(table, "ARM9TDMI-TIMING-SWP-001")["data_bus"],
+            "2N",
+        )
+        conflicts = {
+            conflict["id"]: conflict
+            for conflict in table["source_conflicts"]
+        }
+        resolution = conflicts["ARM9TDMI-TIMING-SWP-DATABUS-001"]
+        self.assertIn("Table 7-2", resolution["instruction_summary_source"])
+        self.assertIn("Table 7-3", resolution["data_summary_source"])
+        self.assertIn("read-to-write direction change", resolution["resolution"])
 
 
 if __name__ == "__main__":
