@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-MISC-TRANSFER-COMPLETE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A successfully completed LDRH, LDRSB, or LDRSH writes its formatted value to the non-PC destination, while STRH writes no register; any pending base writeback commits only with successful transfer completion.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.28-§A4.1.30; §A4.1.104; §A5.3"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_misc_transfer_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/misc_transfer_complete_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-MISC-TRANSFER-DATA-ABORT-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "abort_and_ordering",
+      "statement": "A precise Data Abort suppresses a miscellaneous load destination update and any miscellaneous-transfer base writeback, preserving the base-restored abort model.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.6.6 Effects of data-aborted instructions; Abort models"},
+        {"source": "DDI0180A", "locator": "§2.1.1 Data abort model"},
+        {"source": "DDI0201D", "locator": "§2.2.1 Data Abort model"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_misc_transfer_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/misc_transfer_complete_tb.sv"]}
+    }
+  ]
+}
