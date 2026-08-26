@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-ARM-DOUBLEWORD-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "ARM946E-S implements ARMv5TE LDRD and STRD in the Addressing Mode 3 signed-store extension encodings.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.26 LDRD; §A4.1.102 STRD; §A5.3.1"},
+        {"source": "DDI0165B", "locator": "§7.1 Table 7-2 LDRD and STRD rows"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_decode.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_decode_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-ARM-DOUBLEWORD-EXCLUDE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm_instruction_semantics",
+      "statement": "ARMv5TE LDRD and STRD encodings are not legal instructions in the ARM9TDMI ARMv4T profile.",
+      "source_refs": [
+        {"source": "DDI0180A", "locator": "§2.1 Table 2-1 ARM architecture v4T"},
+        {"source": "DDI0100I", "locator": "§A4.1.26 and §A4.1.102 architecture version"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_decode.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_decode_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-DOUBLEWORD-ADDRESS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "LDRD and STRD use Addressing Mode 3 immediate/register, pre/post-index, add/subtract, and writeback rules; their second word address is the effective address plus four.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.26; §A4.1.102; §A5.3.2-§A5.3.7"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_decode.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_decode_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-DOUBLEWORD-CONSTRAINTS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "LDRD/STRD require an even first data register below R14; odd first registers are UNDEFINED, R14 and the documented R15, reserved-bit, writeback, base, and LDRD index collisions are UNPREDICTABLE.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.26 LDRD notes; §A4.1.102 STRD notes; §A5.3"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_decode.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_decode_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-DOUBLEWORD-ALIGNMENT-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "ARM946E-S has no ARMv6 U-bit unaligned mode; a pre-ARMv6 LDRD or STRD effective address that is not 64-bit aligned is UNPREDICTABLE absent an alignment abort.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.26 LDRD alignment; §A4.1.102 STRD alignment"},
+        {"source": "DDI0201D", "locator": "§2.3.5 Control Register bit map"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_doubleword_transfer_decode.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/doubleword_transfer_decode_tb.sv"]}
+    }
+  ]
+}
