@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-MRS-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "The conditional ARM MRS encoding selects CPSR or the current mode SPSR with R and names a non-PC destination register; R15 as Rd is reported UNPREDICTABLE.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.38 MRS"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_psr_transfer_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/psr_transfer_decoder_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-MSR-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "The conditional ARM MSR register and rotated-immediate encodings select CPSR/SPSR with R and expose the c/x/s/f byte field mask. Only the unshifted register and architectural rotated-immediate operand forms decode.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.39 MSR encoding and addressing modes"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_psr_transfer_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/psr_transfer_decoder_tb.sv"]}
+    }
+  ]
+}

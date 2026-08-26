@@ -70,6 +70,7 @@ EXCEPTION_ENTRY_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 EXCEPTION_ARBITER_RTL_SOURCES := rtl/arm9_arch_pkg.sv \
 	rtl/arm9_exception_arbiter.sv
 SWI_EXECUTE_RTL_SOURCES := rtl/arm9_condition_eval.sv rtl/arm9_swi_execute.sv
+PSR_TRANSFER_DECODER_RTL_SOURCES := rtl/arm9_psr_transfer_decoder.sv
 MISC_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_address_mode3.sv \
 	rtl/arm9_misc_transfer_prepare.sv
@@ -125,6 +126,7 @@ BLOCK_PC_COMPLETE_TB := tb/unit/block_pc_complete_tb.sv
 EXCEPTION_ENTRY_TB := tb/unit/exception_entry_tb.sv
 EXCEPTION_ARBITER_TB := tb/unit/exception_arbiter_tb.sv
 SWI_EXECUTE_TB := tb/unit/swi_execute_tb.sv
+PSR_TRANSFER_DECODER_TB := tb/unit/psr_transfer_decoder_tb.sv
 MISC_TRANSFER_PREPARE_TB := tb/unit/misc_transfer_prepare_tb.sv
 MISC_LOAD_DATA_FORMAT_TB := tb/unit/misc_load_data_format_tb.sv
 MISC_TRANSFER_COMPLETE_TB := tb/unit/misc_transfer_complete_tb.sv
@@ -152,6 +154,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-exception-entry \
 	test-exception-arbiter \
 	test-swi-execute \
+	test-psr-transfer-decoder \
 	test-misc-transfer-prepare \
 	test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
@@ -202,6 +205,7 @@ help:
 	@echo "  test-exception-entry test all architectural exception entry effects"
 	@echo "  test-exception-arbiter test fixed priority and I/F masking"
 	@echo "  test-swi-execute test condition-gated ARM SWI requests"
+	@echo "  test-psr-transfer-decoder exhaustively test MRS/MSR encodings"
 	@echo "  test-misc-transfer-prepare test common halfword/signed request intent"
 	@echo "  test-misc-load-data-format test LDRH/LDRSB/LDRSH extension"
 	@echo "  test-misc-transfer-complete test miscellaneous commit and abort intent"
@@ -325,6 +329,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module swi_execute_tb \
 		$(SWI_EXECUTE_RTL_SOURCES) $(SWI_EXECUTE_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module psr_transfer_decoder_tb \
+		$(PSR_TRANSFER_DECODER_RTL_SOURCES) $(PSR_TRANSFER_DECODER_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module misc_transfer_prepare_tb \
 		$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
@@ -619,6 +626,14 @@ $(BUILD_DIR)/swi_execute/Vswi_execute_tb: \
 		--top-module swi_execute_tb \
 		$(SWI_EXECUTE_RTL_SOURCES) $(SWI_EXECUTE_TB)
 
+$(BUILD_DIR)/psr_transfer_decoder/Vpsr_transfer_decoder_tb: \
+	$(PSR_TRANSFER_DECODER_RTL_SOURCES) $(PSR_TRANSFER_DECODER_TB)
+	@mkdir -p $(BUILD_DIR)/psr_transfer_decoder
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/psr_transfer_decoder \
+		--top-module psr_transfer_decoder_tb \
+		$(PSR_TRANSFER_DECODER_RTL_SOURCES) $(PSR_TRANSFER_DECODER_TB)
+
 $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb: \
 	$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
 	@mkdir -p $(BUILD_DIR)/misc_transfer_prepare
@@ -730,6 +745,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/exception_entry/Vexception_entry_tb \
 	$(BUILD_DIR)/exception_arbiter/Vexception_arbiter_tb \
 	$(BUILD_DIR)/swi_execute/Vswi_execute_tb \
+	$(BUILD_DIR)/psr_transfer_decoder/Vpsr_transfer_decoder_tb \
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb \
 	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb \
 	$(BUILD_DIR)/misc_transfer_complete/Vmisc_transfer_complete_tb \
@@ -852,6 +868,10 @@ test-exception-arbiter: $(BUILD_DIR)/exception_arbiter/Vexception_arbiter_tb
 test-swi-execute: $(BUILD_DIR)/swi_execute/Vswi_execute_tb
 	$(BUILD_DIR)/swi_execute/Vswi_execute_tb
 
+test-psr-transfer-decoder: \
+	$(BUILD_DIR)/psr_transfer_decoder/Vpsr_transfer_decoder_tb
+	$(BUILD_DIR)/psr_transfer_decoder/Vpsr_transfer_decoder_tb
+
 test-misc-transfer-prepare: $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 
@@ -890,6 +910,7 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-single-load-complete test-single-store-complete test-address-mode3 \
 	test-address-mode4 test-block-transfer-prepare test-block-pc-complete \
 	test-exception-entry test-exception-arbiter test-swi-execute \
+	test-psr-transfer-decoder \
 	test-misc-transfer-prepare test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
 	test-doubleword-transfer-prepare test-doubleword-transfer-complete \
