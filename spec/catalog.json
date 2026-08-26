@@ -4,6 +4,7 @@
   "categories": [
     {"id": "profiles", "description": "Processor and architecture revision selection", "research_status": "BASELINED"},
     {"id": "arm_instruction_encodings", "description": "ARM instruction decode and profile legality", "research_status": "PLANNED"},
+    {"id": "arm_instruction_semantics", "description": "ARM instruction arithmetic, state effects, and constrained behavior", "research_status": "IN_PROGRESS"},
     {"id": "thumb_instruction_encodings", "description": "Thumb instruction decode and profile legality", "research_status": "PLANNED"},
     {"id": "conditions", "description": "Condition execution and flags", "research_status": "BASELINED"},
     {"id": "status_and_modes", "description": "CPSR, SPSR, modes, banked registers, and privilege", "research_status": "IN_PROGRESS"},

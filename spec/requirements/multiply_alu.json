@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-MULTIPLY-ARITH-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "MUL and MLA produce the low 32 bits of a 32-by-32 product with optional modulo-2^32 accumulation; UMULL/UMLAL and SMULL/SMLAL produce unsigned or signed 64-bit products with optional modulo-2^64 accumulation.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.34; §A4.1.40; §A4.1.76; §A4.1.87; §A4.1.128-§A4.1.129"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_common_multiply_alu.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/common_multiply_alu_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-MULTIPLY-FLAGS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "Flag-setting common multiplies update N and Z from the 32-bit or 64-bit result. ARMv5 and later leave C and V unchanged; ARMv4 leaves short-multiply C and long-multiply C/V UNPREDICTABLE.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.34 MLA Operation/Notes; §A4.1.40 MUL Operation/Notes; §A4.1.76 SMLAL Operation/Notes; §A4.1.87 SMULL Operation/Notes; §A4.1.128 UMLAL Operation/Notes; §A4.1.129 UMULL Operation/Notes"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_common_multiply_alu.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/common_multiply_alu_tb.sv"]},
+      "notes": "The ARM9TDMI datapath deterministically preserves incoming C/V while separately asserting unconstrained-output indicators. No public implementation-specific source has yet established the silicon values within the architecture's UNPREDICTABLE space."
+    }
+  ]
+}
