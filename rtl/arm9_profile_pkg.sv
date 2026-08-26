@@ -11,6 +11,7 @@ package arm9_profile_pkg;
 
   typedef struct packed {
     arm9_architecture_e architecture;
+    logic [2:0]         integer_pipeline_stages;
     logic               has_v5te;
     logic               has_cp15;
     logic               has_mpu;
@@ -22,14 +23,13 @@ package arm9_profile_pkg;
     logic               multiply_early_termination;
   } arm9_profile_config_t;
 
-  localparam int unsigned ARM9_INTEGER_PIPELINE_STAGES = 5;
-
   function automatic arm9_profile_config_t profile_config(
     input arm9_profile_e profile
   );
     arm9_profile_config_t profile_cfg;
 
     profile_cfg = '0;
+    profile_cfg.integer_pipeline_stages = 3'd5;
     case (profile)
       ARM9_PROFILE_ARM9TDMI: begin
         profile_cfg.architecture               = ARM9_ARCH_V4T;

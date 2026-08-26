@@ -2,9 +2,10 @@
 
 Last updated: 2026-08-25
 
-No processor RTL exists at this milestone. Nothing is claimed cycle-accurate or ISA
-complete. The source and traceability database is validated, but specification
-coverage is still being expanded.
+The first common architectural-state primitives now exist, but there is no integrated
+processor core yet. Nothing is claimed cycle-accurate or ISA complete. The source and
+traceability database is validated, but specification coverage is still being
+expanded.
 
 Status vocabulary:
 
@@ -18,8 +19,8 @@ Status vocabulary:
 
 | Domain | Specification | RTL | Verification |
 |---|---|---|---|
-| Profile/revision selection | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
-| ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14 banking) | VERIFIED bank selection; CPSR/SPSR/PC not implemented |
+| Profile/revision selection | BASELINED | VERIFIED configuration package | VERIFIED for both profiles |
+| ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14, CPSR/SPSR banks) | VERIFIED bank selection, PSR masks, and defined reset fields; PC/instruction semantics not implemented |
 | ARM condition evaluation | BASELINED | VERIFIED | VERIFIED (256 combinations) |
 | ARM instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Thumb instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |

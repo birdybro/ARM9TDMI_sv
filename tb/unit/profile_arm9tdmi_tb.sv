@@ -8,7 +8,7 @@ module profile_arm9tdmi_tb;
 
     // REQ: ARM9TDMI-PROFILE-001
     assert (profile_cfg.architecture == ARM9_ARCH_V4T);
-    assert (ARM9_INTEGER_PIPELINE_STAGES == 5);
+    assert (profile_cfg.integer_pipeline_stages == 5);
 
     // REQ: ARM9TDMI-PROFILE-002
     assert (!profile_cfg.has_v5te);

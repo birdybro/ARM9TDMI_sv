@@ -21,3 +21,10 @@ values.
 Shared RTL is permitted only where the two manuals establish common behavior.
 Profile-specific pipeline timing, instruction legality, multiplier behavior, memory
 interfaces, and system features remain separate at their behavioral boundaries.
+
+The common state layer currently contains mode-aware R0-R14 physical banking and a
+CPSR/five-SPSR store. PSR reserved bits are masked according to the selected
+architecture profile, so Q exists only for ARM946E-S. The status-register reset path
+only initializes the fields the manuals define (Supervisor mode, I=1, F=1, T=0);
+NZCV and Q deliberately have no reset assignment because their post-reset values are
+documented as indeterminate.

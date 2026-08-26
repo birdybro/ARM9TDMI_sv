@@ -9,7 +9,7 @@ module profile_arm946es_tb;
     // REQ: ARM946ES-PROFILE-001
     assert (profile_cfg.architecture == ARM9_ARCH_V5TE);
     assert (profile_cfg.has_v5te);
-    assert (ARM9_INTEGER_PIPELINE_STAGES == 5);
+    assert (profile_cfg.integer_pipeline_stages == 5);
 
     // REQ: ARM946ES-PROFILE-002
     assert (profile_cfg.has_cp15);

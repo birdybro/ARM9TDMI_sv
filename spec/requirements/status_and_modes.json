@@ -52,8 +52,56 @@
       "category": "status_and_modes",
       "statement": "CPSR is visible in every mode; FIQ, IRQ, Supervisor, Abort, and Undefined each have one SPSR, while User and System have no SPSR.",
       "source_refs": [{"source": "DDI0100I", "locator": "§A2.5; Figure A2-1"}],
-      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
-      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_status_registers.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/status_registers_tb.sv"]}
+    },
+    {
+      "id": "COMMON-PSR-RESERVED-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "PSR bits reserved by ARMv4T and ARMv5TE read as zero and ignore writes; the implemented common fields are NZCV, I, F, T, and M[4:0].",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.5.1; §A2.5.4-§A2.5.9"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_psr_pkg.sv", "rtl/arm9_status_registers.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/status_registers_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-PSR-Q-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "status_and_modes",
+      "statement": "For the ARMv4T ARM9TDMI profile, PSR bit 27 is reserved and reads zero; writes have no effect.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.5.1; §A2.5.3"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_psr_pkg.sv", "rtl/arm9_status_registers.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/status_registers_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-PSR-Q-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "For the ARMv5TE ARM946E-S profile, PSR bit 27 is the Q flag and is preserved independently in CPSR and each SPSR.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.5.3"},
+        {"source": "DDI0165B", "locator": "§2.8 Figure 2-6; §2.8.1 The Q flag"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_psr_pkg.sv", "rtl/arm9_status_registers.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/status_registers_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-RESET-CPSR-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "reset_interrupt_clock",
+      "statement": "On reset release, CPSR enters Supervisor mode with I and F set and T clear; other CPSR bits are not constrained by this requirement.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.6.2"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_status_registers.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/status_registers_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-RESET-CPSR-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "reset_interrupt_clock",
+      "statement": "On reset release, CPSR enters Supervisor mode with I and F set and T clear; all other CPSR bits are indeterminate.",
+      "source_refs": [{"source": "DDI0165B", "locator": "§2.9.4"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_status_registers.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/status_registers_tb.sv"]}
     }
   ]
 }
