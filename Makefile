@@ -62,6 +62,8 @@ ADDRESS_MODE3_RTL_SOURCES := rtl/arm9_isa_pkg.sv rtl/arm9_address_mode3.sv
 MISC_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_address_mode3.sv \
 	rtl/arm9_misc_transfer_prepare.sv
+MISC_LOAD_DATA_FORMAT_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
+	rtl/arm9_misc_load_data_format.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
@@ -93,6 +95,7 @@ SINGLE_LOAD_COMPLETE_TB := tb/unit/single_load_complete_tb.sv
 SINGLE_STORE_COMPLETE_TB := tb/unit/single_store_complete_tb.sv
 ADDRESS_MODE3_TB := tb/unit/address_mode3_tb.sv
 MISC_TRANSFER_PREPARE_TB := tb/unit/misc_transfer_prepare_tb.sv
+MISC_LOAD_DATA_FORMAT_TB := tb/unit/misc_load_data_format_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
@@ -106,7 +109,8 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-saturating-decoder test-saturating-alu test-saturating-execute \
 	test-address-mode2 test-single-transfer-prepare test-store-data-select \
 	test-load-data-align test-single-load-complete test-single-store-complete \
-	test-address-mode3 test-misc-transfer-prepare test-formal synth \
+	test-address-mode3 test-misc-transfer-prepare test-misc-load-data-format \
+	test-formal synth \
 	regression clean
 
 all: test
@@ -147,6 +151,7 @@ help:
 	@echo "  test-single-store-complete test STR completion and abort intent"
 	@echo "  test-address-mode3 test common ARM miscellaneous transfer addresses"
 	@echo "  test-misc-transfer-prepare test common halfword/signed request intent"
+	@echo "  test-misc-load-data-format test LDRH/LDRSB/LDRSH extension"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -246,6 +251,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module misc_transfer_prepare_tb \
 		$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module misc_load_data_format_tb \
+		$(MISC_LOAD_DATA_FORMAT_RTL_SOURCES) $(MISC_LOAD_DATA_FORMAT_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -470,6 +478,14 @@ $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb: \
 		--top-module misc_transfer_prepare_tb \
 		$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
 
+$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb: \
+	$(MISC_LOAD_DATA_FORMAT_RTL_SOURCES) $(MISC_LOAD_DATA_FORMAT_TB)
+	@mkdir -p $(BUILD_DIR)/misc_load_data_format
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/misc_load_data_format \
+		--top-module misc_load_data_format_tb \
+		$(MISC_LOAD_DATA_FORMAT_RTL_SOURCES) $(MISC_LOAD_DATA_FORMAT_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
@@ -500,7 +516,8 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/single_load_complete/Vsingle_load_complete_tb \
 	$(BUILD_DIR)/single_store_complete/Vsingle_store_complete_tb \
 	$(BUILD_DIR)/address_mode3/Vaddress_mode3_tb \
-	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
+	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb \
+	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -598,6 +615,9 @@ test-address-mode3: $(BUILD_DIR)/address_mode3/Vaddress_mode3_tb
 test-misc-transfer-prepare: $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 
+test-misc-load-data-format: $(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb
+	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb
+
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
 	test-data-alu test-immediate test-data-decoder test-data-execute test-pc \
 	test-arm-branch test-multiplier-timing test-multiply-decoder \
@@ -607,7 +627,7 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-saturating-alu test-saturating-execute test-address-mode2 \
 	test-single-transfer-prepare test-store-data-select test-load-data-align \
 	test-single-load-complete test-single-store-complete test-address-mode3 \
-	test-misc-transfer-prepare
+	test-misc-transfer-prepare test-misc-load-data-format
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v

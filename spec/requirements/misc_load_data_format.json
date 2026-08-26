@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-LDRH-ZERO-EXTEND-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "LDRH zero-extends the endian-selected memory halfword to 32 bits.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.28 LDRH"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_misc_load_data_format.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/misc_load_data_format_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-LDRSB-SIGN-EXTEND-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "LDRSB sign-extends the endian-selected memory byte to 32 bits.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.29 LDRSB"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_misc_load_data_format.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/misc_load_data_format_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-LDRSH-SIGN-EXTEND-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "LDRSH sign-extends the endian-selected memory halfword to 32 bits.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.30 LDRSH"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_misc_load_data_format.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/misc_load_data_format_tb.sv"]}
+    }
+  ]
+}
