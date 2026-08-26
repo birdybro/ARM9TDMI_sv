@@ -59,6 +59,7 @@ SINGLE_LOAD_COMPLETE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_single_load_complete.sv
 SINGLE_STORE_COMPLETE_RTL_SOURCES := rtl/arm9_single_store_complete.sv
 ADDRESS_MODE3_RTL_SOURCES := rtl/arm9_isa_pkg.sv rtl/arm9_address_mode3.sv
+ADDRESS_MODE4_RTL_SOURCES := rtl/arm9_address_mode4.sv
 MISC_TRANSFER_PREPARE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_address_mode3.sv \
 	rtl/arm9_misc_transfer_prepare.sv
@@ -108,6 +109,7 @@ LOAD_DATA_ALIGN_TB := tb/unit/load_data_align_tb.sv
 SINGLE_LOAD_COMPLETE_TB := tb/unit/single_load_complete_tb.sv
 SINGLE_STORE_COMPLETE_TB := tb/unit/single_store_complete_tb.sv
 ADDRESS_MODE3_TB := tb/unit/address_mode3_tb.sv
+ADDRESS_MODE4_TB := tb/unit/address_mode4_tb.sv
 MISC_TRANSFER_PREPARE_TB := tb/unit/misc_transfer_prepare_tb.sv
 MISC_LOAD_DATA_FORMAT_TB := tb/unit/misc_load_data_format_tb.sv
 MISC_TRANSFER_COMPLETE_TB := tb/unit/misc_transfer_complete_tb.sv
@@ -130,7 +132,8 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-saturating-decoder test-saturating-alu test-saturating-execute \
 	test-address-mode2 test-single-transfer-prepare test-store-data-select \
 	test-load-data-align test-single-load-complete test-single-store-complete \
-	test-address-mode3 test-misc-transfer-prepare test-misc-load-data-format \
+	test-address-mode3 test-address-mode4 test-misc-transfer-prepare \
+	test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
 	test-doubleword-transfer-prepare test-doubleword-transfer-complete \
 	test-swap-decoder test-swap-prepare test-swap-complete test-formal synth \
@@ -173,6 +176,7 @@ help:
 	@echo "  test-single-load-complete test LDR completion, PC, and abort intent"
 	@echo "  test-single-store-complete test STR completion and abort intent"
 	@echo "  test-address-mode3 test common ARM miscellaneous transfer addresses"
+	@echo "  test-address-mode4 exhaustively test ARM block-transfer ranges"
 	@echo "  test-misc-transfer-prepare test common halfword/signed request intent"
 	@echo "  test-misc-load-data-format test LDRH/LDRSB/LDRSH extension"
 	@echo "  test-misc-transfer-complete test miscellaneous commit and abort intent"
@@ -278,6 +282,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module address_mode3_tb \
 		$(ADDRESS_MODE3_RTL_SOURCES) $(ADDRESS_MODE3_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module address_mode4_tb \
+		$(ADDRESS_MODE4_RTL_SOURCES) $(ADDRESS_MODE4_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module misc_transfer_prepare_tb \
 		$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
@@ -524,6 +531,14 @@ $(BUILD_DIR)/address_mode3/Vaddress_mode3_tb: \
 		--top-module address_mode3_tb \
 		$(ADDRESS_MODE3_RTL_SOURCES) $(ADDRESS_MODE3_TB)
 
+$(BUILD_DIR)/address_mode4/Vaddress_mode4_tb: \
+	$(ADDRESS_MODE4_RTL_SOURCES) $(ADDRESS_MODE4_TB)
+	@mkdir -p $(BUILD_DIR)/address_mode4
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/address_mode4 \
+		--top-module address_mode4_tb \
+		$(ADDRESS_MODE4_RTL_SOURCES) $(ADDRESS_MODE4_TB)
+
 $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb: \
 	$(MISC_TRANSFER_PREPARE_RTL_SOURCES) $(MISC_TRANSFER_PREPARE_TB)
 	@mkdir -p $(BUILD_DIR)/misc_transfer_prepare
@@ -629,6 +644,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/single_load_complete/Vsingle_load_complete_tb \
 	$(BUILD_DIR)/single_store_complete/Vsingle_store_complete_tb \
 	$(BUILD_DIR)/address_mode3/Vaddress_mode3_tb \
+	$(BUILD_DIR)/address_mode4/Vaddress_mode4_tb \
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb \
 	$(BUILD_DIR)/misc_load_data_format/Vmisc_load_data_format_tb \
 	$(BUILD_DIR)/misc_transfer_complete/Vmisc_transfer_complete_tb \
@@ -732,6 +748,9 @@ test-single-store-complete: $(BUILD_DIR)/single_store_complete/Vsingle_store_com
 test-address-mode3: $(BUILD_DIR)/address_mode3/Vaddress_mode3_tb
 	$(BUILD_DIR)/address_mode3/Vaddress_mode3_tb
 
+test-address-mode4: $(BUILD_DIR)/address_mode4/Vaddress_mode4_tb
+	$(BUILD_DIR)/address_mode4/Vaddress_mode4_tb
+
 test-misc-transfer-prepare: $(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 	$(BUILD_DIR)/misc_transfer_prepare/Vmisc_transfer_prepare_tb
 
@@ -768,6 +787,7 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-saturating-alu test-saturating-execute test-address-mode2 \
 	test-single-transfer-prepare test-store-data-select test-load-data-align \
 	test-single-load-complete test-single-store-complete test-address-mode3 \
+	test-address-mode4 \
 	test-misc-transfer-prepare test-misc-load-data-format \
 	test-misc-transfer-complete test-doubleword-transfer-decode \
 	test-doubleword-transfer-prepare test-doubleword-transfer-complete \

@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-ADDRESS-MODE4-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "Conditional ARM encodings with bits[27:25]=100 decode as LDM/STM Addressing Mode 4. R15 as Rn, an empty register list, and writeback on the user-register-transfer form are reported as UNPREDICTABLE encodings; S selects user-bank transfer except for LDM including R15, where it selects SPSR-to-CPSR restoration.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.12; §A4.1.20-§A4.1.22; §A4.1.97-§A4.1.98"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode4.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode4_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-ADDRESS-MODE4-RANGE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "IA, IB, DA, and DB generate ascending word addresses from the documented aligned start through end address, and writeback changes the original base by four times the register count in the U direction while preserving its low bits.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A5.4.1-§A5.4.5 Addressing Mode 4"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode4.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode4_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-BLOCK-BASE-COLLISION-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "With writeback and Rn in the list, LDM reports its final base value as UNPREDICTABLE. STM stores the original Rn when it is the lowest selected register and reports only the stored Rn value as UNPREDICTABLE otherwise.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.20 LDM operand restrictions; §A4.1.97 STM operand restrictions"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_address_mode4.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/address_mode4_tb.sv"]}
+    }
+  ]
+}
