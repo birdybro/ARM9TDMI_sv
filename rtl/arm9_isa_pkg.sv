@@ -24,4 +24,12 @@ package arm9_isa_pkg;
     ARM9_DATA_BIC = 4'b1110,
     ARM9_DATA_MVN = 4'b1111
   } arm9_data_opcode_e;
+
+  typedef enum logic [2:0] {
+    ARM9_BRANCH_B,
+    ARM9_BRANCH_BL,
+    ARM9_BRANCH_BX,
+    ARM9_BRANCH_BLX_IMMEDIATE,
+    ARM9_BRANCH_BLX_REGISTER
+  } arm9_branch_kind_e;
 endpackage

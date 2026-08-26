@@ -17,6 +17,8 @@ DATA_EXECUTE_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_immediate_expander.sv rtl/arm9_data_alu.sv \
 	rtl/arm9_data_processing_decoder.sv rtl/arm9_data_processing_execute.sv
 PC_RTL_SOURCES := rtl/arm9_pc_addressing.sv
+ARM_BRANCH_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_isa_pkg.sv \
+	rtl/arm9_condition_eval.sv rtl/arm9_arm_branch_execute.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
@@ -28,13 +30,15 @@ IMMEDIATE_TB := tb/unit/immediate_expander_tb.sv
 DATA_DECODER_TB := tb/unit/data_processing_decoder_tb.sv
 DATA_EXECUTE_TB := tb/unit/data_processing_execute_tb.sv
 PC_TB := tb/unit/pc_addressing_tb.sv
+ARM_BRANCH_TB := tb/unit/arm_branch_execute_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
 .PHONY: all help toolchain spec lint compile test test-unit test-rtl-unit \
 	test-condition test-register-file test-arm9tdmi test-arm946es test-timing \
 	test-status-registers test-shifter test-data-alu test-immediate \
-	test-data-decoder test-data-execute test-pc test-formal synth regression clean
+	test-data-decoder test-data-execute test-pc test-arm-branch \
+	test-formal synth regression clean
 
 all: test
 
@@ -54,6 +58,7 @@ help:
 	@echo "  test-data-decoder exhaustively test ARM data-processing decode"
 	@echo "  test-data-execute test integrated ARM data-processing execution"
 	@echo "  test-pc         test ARM/Thumb PC read and write rules"
+	@echo "  test-arm-branch test profile-specific ARM B/BL/BX/BLX behavior"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -93,6 +98,9 @@ lint: spec
 		$(DATA_EXECUTE_RTL_SOURCES) $(DATA_EXECUTE_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module pc_addressing_tb $(PC_RTL_SOURCES) $(PC_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module arm_branch_execute_tb \
+		$(ARM_BRANCH_RTL_SOURCES) $(ARM_BRANCH_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -157,6 +165,14 @@ $(BUILD_DIR)/pc_addressing/Vpc_addressing_tb: $(PC_RTL_SOURCES) $(PC_TB)
 	$(VERILATOR) $(VERILATOR_COMMON) --timing --Mdir $(BUILD_DIR)/pc_addressing \
 		--top-module pc_addressing_tb $(PC_RTL_SOURCES) $(PC_TB)
 
+$(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb: \
+	$(ARM_BRANCH_RTL_SOURCES) $(ARM_BRANCH_TB)
+	@mkdir -p $(BUILD_DIR)/arm_branch_execute
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/arm_branch_execute \
+		--top-module arm_branch_execute_tb \
+		$(ARM_BRANCH_RTL_SOURCES) $(ARM_BRANCH_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
@@ -167,7 +183,8 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/immediate_expander/Vimmediate_expander_tb \
 	$(BUILD_DIR)/data_processing_decoder/Vdata_processing_decoder_tb \
 	$(BUILD_DIR)/data_processing_execute/Vdata_processing_execute_tb \
-	$(BUILD_DIR)/pc_addressing/Vpc_addressing_tb
+	$(BUILD_DIR)/pc_addressing/Vpc_addressing_tb \
+	$(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -205,8 +222,12 @@ test-data-execute: $(BUILD_DIR)/data_processing_execute/Vdata_processing_execute
 test-pc: $(BUILD_DIR)/pc_addressing/Vpc_addressing_tb
 	$(BUILD_DIR)/pc_addressing/Vpc_addressing_tb
 
+test-arm-branch: $(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb
+	$(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb
+
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
-	test-data-alu test-immediate test-data-decoder test-data-execute test-pc
+	test-data-alu test-immediate test-data-decoder test-data-execute test-pc \
+	test-arm-branch
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-BRANCH-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "ARM B and BL add the sign-extended 24-bit offset shifted left two to instruction address plus 8; BL writes instruction address plus 4 to R14, and both obey the condition field.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.5"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_arm_branch_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/arm_branch_execute_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-BX-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "ARM BX conditionally branches to Rm with bit 0 cleared, selects Thumb state from bit 0, and reports the ARM-target 0b10 alignment case as UNPREDICTABLE.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.10"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_arm_branch_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/arm_branch_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-BLX-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "ARMv5TE BLX immediate and BLX register are legal in the ARM946E-S profile, write R14 with instruction address plus 4, and apply their documented state and target rules.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.8-§A4.1.9"},
+        {"source": "DDI0165B", "locator": "§2.7 ARM instruction summary; BLX entries"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_arm_branch_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/arm_branch_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-NO-BLX-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm_instruction_encodings",
+      "statement": "BLX encodings are not legal instructions in the ARMv4T ARM9TDMI profile and cannot take a branch or write the link register.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.8-§A4.1.9 Architecture version"},
+        {"source": "DDI0180A", "locator": "§1.1 ARMv4T architecture"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_arm_branch_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/arm_branch_execute_tb.sv"]}
+    }
+  ]
+}
