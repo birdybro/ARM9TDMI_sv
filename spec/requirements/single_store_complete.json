@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-SINGLE-STORE-DATA-ABORT-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "abort_and_ordering",
+      "statement": "On a precise Data Abort from a single-register store, any specified base-register writeback is suppressed under the base-restored abort model. External memory effects of the aborted transfer are outside this architectural commit block.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.6.6 Effects of data-aborted instructions; Abort models"},
+        {"source": "DDI0180A", "locator": "§2.1.1 Data abort model"},
+        {"source": "DDI0201D", "locator": "§2.2.1 Data Abort model"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_store_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_store_complete_tb.sv"]}
+    }
+  ]
+}

@@ -24,7 +24,7 @@ Status vocabulary:
 | ARM condition evaluation | BASELINED | VERIFIED | VERIFIED (256 combinations) |
 | ARM instruction set | PARTIAL | PARTIAL (non-PC data processing, branch execute, common multiply execute, ARMv5TE DSP multiply execute, CLZ, saturating-arithmetic execute, and single word/byte transfer preparation/load-format paths) | VERIFIED ALU/shifter/immediate/decode integration, branches, multiply/DSP/CLZ/saturating side-effect intents, Addressing Mode 2, condition-gated LDR/STR request/writeback intents, pre-ARMv6 word-load rotation, and LDRB zero extension; memory completion and other classes not implemented |
 | Thumb instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
-| Exceptions and aborts | PARTIAL | PARTIAL (single-load precise Data Abort commit suppression) | VERIFIED single-load destination preservation and base-restored writeback suppression; exception entry and timing not implemented |
+| Exceptions and aborts | PARTIAL | PARTIAL (single-transfer precise Data Abort commit suppression) | VERIFIED single-load destination preservation and base-restored writeback suppression for single loads/stores; exception entry and timing not implemented |
 | Five-stage pipelines | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Instruction cycle summary tables | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Detailed hazards/interlocks | PARTIAL | NOT IMPLEMENTED | NOT IMPLEMENTED |
