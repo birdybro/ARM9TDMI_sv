@@ -19,7 +19,7 @@ Status vocabulary:
 | Domain | Specification | RTL | Verification |
 |---|---|---|---|
 | Profile/revision selection | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
-| ARM programmer-visible state | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
+| ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14 banking) | VERIFIED bank selection; CPSR/SPSR/PC not implemented |
 | ARM condition evaluation | BASELINED | VERIFIED | VERIFIED (256 combinations) |
 | ARM instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Thumb instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |

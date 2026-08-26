@@ -6,7 +6,7 @@
     {"id": "arm_instruction_encodings", "description": "ARM instruction decode and profile legality", "research_status": "PLANNED"},
     {"id": "thumb_instruction_encodings", "description": "Thumb instruction decode and profile legality", "research_status": "PLANNED"},
     {"id": "conditions", "description": "Condition execution and flags", "research_status": "BASELINED"},
-    {"id": "status_and_modes", "description": "CPSR, SPSR, modes, banked registers, and privilege", "research_status": "PLANNED"},
+    {"id": "status_and_modes", "description": "CPSR, SPSR, modes, banked registers, and privilege", "research_status": "IN_PROGRESS"},
     {"id": "exceptions", "description": "Vectors, LR values, priority, recognition, and entry/return", "research_status": "PLANNED"},
     {"id": "pc_semantics", "description": "ARM/Thumb PC reads, writes, stores, and refill behavior", "research_status": "PLANNED"},
     {"id": "pipeline", "description": "Stages, advancement, cancellation, forwarding, and flushing", "research_status": "BASELINED"},

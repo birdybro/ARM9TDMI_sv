@@ -4,15 +4,17 @@ BUILD_DIR ?= build
 
 PROFILE_RTL_SOURCES := rtl/arm9_profile_pkg.sv
 CONDITION_RTL_SOURCES := rtl/arm9_condition_eval.sv
+REGISTER_FILE_RTL_SOURCES := rtl/arm9_arch_pkg.sv rtl/arm9_banked_register_file.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
+REGISTER_FILE_TB := tb/unit/banked_register_file_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
 .PHONY: all help toolchain spec lint compile test test-unit test-rtl-unit \
-	test-condition test-arm9tdmi test-arm946es test-timing test-formal synth \
-	regression clean
+	test-condition test-register-file test-arm9tdmi test-arm946es test-timing \
+	test-formal synth regression clean
 
 all: test
 
@@ -24,6 +26,7 @@ help:
 	@echo "  compile         elaborate and compile both profile tests"
 	@echo "  test            run specification and executable unit tests"
 	@echo "  test-condition  exhaustively test all ARM condition/flag inputs"
+	@echo "  test-register-file test all architectural register banks"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -45,6 +48,8 @@ lint: spec
 		--top-module profile_arm946es_tb $(PROFILE_RTL_SOURCES) $(ARM946ES_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module condition_eval_tb $(CONDITION_RTL_SOURCES) $(CONDITION_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module banked_register_file_tb $(REGISTER_FILE_RTL_SOURCES) $(REGISTER_FILE_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -61,9 +66,16 @@ $(BUILD_DIR)/condition_eval/Vcondition_eval_tb: $(CONDITION_RTL_SOURCES) $(CONDI
 	$(VERILATOR) $(VERILATOR_COMMON) --timing --Mdir $(BUILD_DIR)/condition_eval \
 		--top-module condition_eval_tb $(CONDITION_RTL_SOURCES) $(CONDITION_TB)
 
+$(BUILD_DIR)/banked_register_file/Vbanked_register_file_tb: \
+	$(REGISTER_FILE_RTL_SOURCES) $(REGISTER_FILE_TB)
+	@mkdir -p $(BUILD_DIR)/banked_register_file
+	$(VERILATOR) $(VERILATOR_COMMON) --timing --Mdir $(BUILD_DIR)/banked_register_file \
+		--top-module banked_register_file_tb $(REGISTER_FILE_RTL_SOURCES) $(REGISTER_FILE_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
-	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb
+	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
+	$(BUILD_DIR)/banked_register_file/Vbanked_register_file_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -77,7 +89,10 @@ test-arm946es: $(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb
 test-condition: $(BUILD_DIR)/condition_eval/Vcondition_eval_tb
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb
 
-test-rtl-unit: test-condition
+test-register-file: $(BUILD_DIR)/banked_register_file/Vbanked_register_file_tb
+	$(BUILD_DIR)/banked_register_file/Vbanked_register_file_tb
+
+test-rtl-unit: test-condition test-register-file
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v

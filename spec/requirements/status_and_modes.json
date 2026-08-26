@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "mode_encodings": [
+    {"mode": "User", "encoding": "10000", "privileged": false, "has_spsr": false},
+    {"mode": "FIQ", "encoding": "10001", "privileged": true, "has_spsr": true},
+    {"mode": "IRQ", "encoding": "10010", "privileged": true, "has_spsr": true},
+    {"mode": "Supervisor", "encoding": "10011", "privileged": true, "has_spsr": true},
+    {"mode": "Abort", "encoding": "10111", "privileged": true, "has_spsr": true},
+    {"mode": "Undefined", "encoding": "11011", "privileged": true, "has_spsr": true},
+    {"mode": "System", "encoding": "11111", "privileged": true, "has_spsr": false}
+  ],
+  "requirements": [
+    {
+      "id": "COMMON-MODE-ENCODING-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "Exactly seven processor modes use the encodings in mode_encodings; User is unprivileged, System is privileged but shares User registers, and the five exception modes have SPSRs.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.2 Table A2-1; §A2.5.7 Table A2-2"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_arch_pkg.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/banked_register_file_tb.sv"]}
+    },
+    {
+      "id": "COMMON-REG-BANKING-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "R0 through R7 are one shared physical bank in every processor mode.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.4.1; Figure A2-1"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_banked_register_file.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/banked_register_file_tb.sv"]}
+    },
+    {
+      "id": "COMMON-REG-BANKING-002",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "R8 through R12 select a dedicated FIQ bank in FIQ mode and one shared User bank in all other modes.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.4.2; Figure A2-1"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_banked_register_file.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/banked_register_file_tb.sv"]}
+    },
+    {
+      "id": "COMMON-REG-BANKING-003",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "R13 and R14 select one shared User/System bank or one bank for each of FIQ, IRQ, Supervisor, Abort, and Undefined modes.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.4.2; Figure A2-1"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_banked_register_file.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/banked_register_file_tb.sv"]}
+    },
+    {
+      "id": "COMMON-PSR-BANKING-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "CPSR is visible in every mode; FIQ, IRQ, Supervisor, Abort, and Undefined each have one SPSR, while User and System have no SPSR.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.5; Figure A2-1"}],
+      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
+      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+    }
+  ]
+}
