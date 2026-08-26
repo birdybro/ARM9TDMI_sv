@@ -18,6 +18,24 @@
       "source_refs": [{"source": "DDI0100I", "locator": "§A3.16 rules 1-3; §A4.1 individual instruction encoding diagrams"}],
       "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_decoder.sv"]},
       "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_decoder_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-DATA-DECODE-COND-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "Condition field 0xF is excluded from ordinary ARM data-processing decode because it identifies the unconditional instruction space rather than a failed normal condition.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2.1 The condition field; §A3.2.2 Unconditional instructions"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_decoder_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-DATA-REGISTER-SHIFT-PC-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "For every register-controlled Addressing Mode 1 shift, specifying R15 as Rd, Rn, Rm, or Rs is UNPREDICTABLE; the decoder emits no valid execution intent for any such combination.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.1.6, §A5.1.8, §A5.1.10, and §A5.1.12 Use of R15"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_decoder_tb.sv"]}
     }
   ]
 }

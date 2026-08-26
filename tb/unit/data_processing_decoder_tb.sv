@@ -115,8 +115,48 @@ module data_processing_decoder_tb;
       end
     end
 
-    assert (cases_checked == 4_096);
-    $display("PASS exhaustive ARM data-processing decoder control space");
+    // Condition 0xF belongs to the unconditional instruction space.
+    // REQ: COMMON-ARM-DATA-DECODE-COND-001
+    instruction = 32'he280_0001;
+    for (int unsigned condition_case = 0; condition_case < 16;
+         condition_case++) begin
+      instruction[31:28] = condition_case[3:0];
+      #1ps;
+      assert (decode_match == (condition_case != 15));
+      assert (encoding_valid == (condition_case != 15));
+      assert (!unpredictable_encoding);
+      cases_checked++;
+    end
+
+    // REQ: COMMON-ARM-DATA-REGISTER-SHIFT-PC-001
+    instruction = 32'he080_0010;
+    for (int unsigned rn_case = 0; rn_case < 16; rn_case++) begin
+      for (int unsigned rd_case = 0; rd_case < 16; rd_case++) begin
+        for (int unsigned rs_case = 0; rs_case < 16; rs_case++) begin
+          for (int unsigned rm_case = 0; rm_case < 16; rm_case++) begin
+            instruction[19:16] = rn_case[3:0];
+            instruction[15:12] = rd_case[3:0];
+            instruction[11:8] = rs_case[3:0];
+            instruction[3:0] = rm_case[3:0];
+            #1ps;
+            assert (decode_match);
+            assert (unpredictable_encoding ==
+                    ((rn_case == 15) || (rd_case == 15) ||
+                     (rs_case == 15) || (rm_case == 15)));
+            assert (encoding_valid == !unpredictable_encoding);
+            assert (first_register == rn_case[3:0]);
+            assert (destination_register == rd_case[3:0]);
+            assert (shift_register == rs_case[3:0]);
+            assert (shifted_register == rm_case[3:0]);
+            cases_checked++;
+          end
+        end
+      end
+    end
+
+    assert (cases_checked == 69_648);
+    $display("PASS exhaustive ARM data-processing decode (%0d cases)",
+             cases_checked);
     $finish;
   end
 endmodule

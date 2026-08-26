@@ -23,6 +23,7 @@ module arm9_data_processing_decoder (
   logic unary_move;
   logic extension_space;
   logic sbz_violation;
+  logic register_shift_pc_violation;
 
   always_comb begin
     condition                  = instruction[31:28];
@@ -45,7 +46,8 @@ module arm9_data_processing_decoder (
     extension_space = !instruction[25] && instruction[7] &&
                       instruction[4];
 
-    decode_match = (instruction[27:26] == 2'b00) &&
+    decode_match = (condition != 4'b1111) &&
+                   (instruction[27:26] == 2'b00) &&
                    !extension_space &&
                    !(test_or_compare && !instruction[20]);
 
@@ -53,7 +55,14 @@ module arm9_data_processing_decoder (
                      (instruction[15:12] != 4'b0000)) ||
                     (unary_move &&
                      (instruction[19:16] != 4'b0000));
-    encoding_valid         = decode_match && !sbz_violation;
-    unpredictable_encoding = decode_match && sbz_violation;
+    register_shift_pc_violation = shift_amount_from_register &&
+      ((first_register == 4'hf) ||
+       (destination_register == 4'hf) ||
+       (shift_register == 4'hf) ||
+       (shifted_register == 4'hf));
+    encoding_valid = decode_match && !sbz_violation &&
+                     !register_shift_pc_violation;
+    unpredictable_encoding = decode_match &&
+      (sbz_violation || register_shift_pc_violation);
   end
 endmodule
