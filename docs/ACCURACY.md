@@ -20,11 +20,11 @@ Status vocabulary:
 | Domain | Specification | RTL | Verification |
 |---|---|---|---|
 | Profile/revision selection | BASELINED | VERIFIED configuration package | VERIFIED for both profiles |
-| ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14, CPSR/SPSR banks, basic PC addressing, ARM9TDMI stored-PC selection) | VERIFIED bank selection, PSR masks, reset fields, ordinary PC reads/writes, BX targets, and ARM9TDMI STR/STM R15 value; ARM946E-S stored-PC choice remains unspecified by reviewed public sources |
+| ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14, CPSR/SPSR banks, basic PC addressing, ARM9TDMI stored-PC selection, profile-specific ARM LDR-to-PC completion) | VERIFIED bank selection, PSR masks, reset fields, ordinary PC reads/writes, BX/LDR targets, ARM946E-S CP15 loading-TBIT control behavior, and ARM9TDMI STR/STM R15 value; ARM946E-S stored-PC choice remains unspecified by reviewed public sources |
 | ARM condition evaluation | BASELINED | VERIFIED | VERIFIED (256 combinations) |
 | ARM instruction set | PARTIAL | PARTIAL (non-PC data processing, branch execute, common multiply execute, ARMv5TE DSP multiply execute, CLZ, saturating-arithmetic execute, and single word/byte transfer preparation/load-format paths) | VERIFIED ALU/shifter/immediate/decode integration, branches, multiply/DSP/CLZ/saturating side-effect intents, Addressing Mode 2, condition-gated LDR/STR request/writeback intents, pre-ARMv6 word-load rotation, and LDRB zero extension; memory completion and other classes not implemented |
 | Thumb instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
-| Exceptions and aborts | PARTIAL | NOT IMPLEMENTED | NOT IMPLEMENTED |
+| Exceptions and aborts | PARTIAL | PARTIAL (single-load precise Data Abort commit suppression) | VERIFIED single-load destination preservation and base-restored writeback suppression; exception entry and timing not implemented |
 | Five-stage pipelines | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Instruction cycle summary tables | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Detailed hazards/interlocks | PARTIAL | NOT IMPLEMENTED | NOT IMPLEMENTED |

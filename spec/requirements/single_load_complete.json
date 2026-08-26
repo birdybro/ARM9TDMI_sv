@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-SINGLE-LOAD-DATA-ABORT-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "abort_and_ordering",
+      "statement": "On a precise Data Abort from a single-register load, the destination register remains unchanged and any specified base-register writeback is suppressed, implementing the base-restored abort model.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.6.6 Effects of data-aborted instructions; Abort models"},
+        {"source": "DDI0180A", "locator": "§2.1.1 Data abort model"},
+        {"source": "DDI0201D", "locator": "§2.2.1 Data Abort model"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_load_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_load_complete_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-LDR-PC-SEMANTICS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "pc_semantics",
+      "statement": "In ARMv4T, ARM LDR to R15 ignores loaded bits[1:0], clears them in the branch target, and continues in ARM state.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.23 LDR description and operation"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_load_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_load_complete_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-LDR-PC-SEMANTICS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "With CP15 Control bit 15 clear, ARM946E-S ARM LDR to R15 clears loaded bit 0 and loads CPSR T from it; loaded bits[1:0]=10 are UNPREDICTABLE. With Control bit 15 set, loading T is disabled and the ARMv4-style word-aligned ARM-state target is used.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.23 LDR description, operation, and use of R15"},
+        {"source": "DDI0201D", "locator": "§2.3.5 Control Register, bit 15 Disable loading TBIT"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_load_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_load_complete_tb.sv"]}
+    }
+  ]
+}
