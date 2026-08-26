@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-DATA-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "The ARM data-processing decoder extracts all instruction and shifter fields while excluding S=0 test/compare control encodings and register encodings with both bits 7 and 4 set, which belong to instruction extension spaces.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.4.1; §A3.16; §A5.1.1"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_decoder_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-DATA-DECODE-SBZ-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "Nonzero SBZ destination fields in TST/TEQ/CMP/CMN and nonzero SBZ first-register fields in MOV/MVN are identified as UNPREDICTABLE encodings rather than treated as valid instructions.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.16 rules 1-3; §A4.1 individual instruction encoding diagrams"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_data_processing_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/data_processing_decoder_tb.sv"]}
+    }
+  ]
+}
