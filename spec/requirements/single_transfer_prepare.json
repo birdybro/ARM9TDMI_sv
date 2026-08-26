@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-SINGLE-TRANSFER-PREPARE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A valid Addressing Mode 2 LDR/LDRB/STR/STRB or translated variant emits a memory-request intent only when its ARM condition passes, with load/store, byte/word, effective address, and translated-user-access controls derived from the instruction.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2; §A4.1.23-§A4.1.25; §A4.1.31; §A4.1.99-§A4.1.101; §A4.1.105; §A5.2"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_transfer_prepare_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-SINGLE-TRANSFER-WRITEBACK-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A condition-passing post-index or W-bit pre-index transfer emits a pending base-writeback value; the preparation stage does not itself mutate architectural state.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.2.1 P/W definitions; §A5.2.5-§A5.2.10 operations"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_transfer_prepare_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-LDR-PC-ADDRESS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "An executed word LDR to R15 requires a word-aligned effective address; the preparation stage reports an unaligned case as an unpredictable access and emits no constrained memory-request intent.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.23 LDR, Notes: Use of R15"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_transfer_prepare_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-STR-PC-UNCERTAINTY-SIGNAL-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "A legal word STR using R15 is identified as requiring the implementation-defined stored-PC value; the preparation stage accepts that value from its caller rather than selecting an undocumented +8 or +12 behavior.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.4.3 Reading the program counter; §A4.1.99 STR"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_transfer_prepare_tb.sv"]}
+    }
+  ]
+}
