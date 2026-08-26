@@ -59,8 +59,8 @@
       {"m": 4, "predicate": "otherwise"}
     ]}
   ],
-  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv", "rtl/arm9_data_operation_timing.sv", "rtl/arm9_pipeline_refill_timing.sv", "rtl/arm9_single_transfer_timing.sv", "rtl/arm9_block_transfer_timing.sv", "rtl/arm9_swap_timing.sv"]},
-  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv", "tb/unit/data_operation_timing_tb.sv", "tb/unit/pipeline_refill_timing_tb.sv", "tb/unit/single_transfer_timing_tb.sv", "tb/unit/block_transfer_timing_tb.sv", "tb/unit/swap_timing_tb.sv"]},
+  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv", "rtl/arm9_data_operation_timing.sv", "rtl/arm9_multiply_sequence.sv", "rtl/arm9_pipeline_refill_timing.sv", "rtl/arm9_single_transfer_timing.sv", "rtl/arm9_block_transfer_timing.sv", "rtl/arm9_swap_timing.sv"]},
+  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv", "tb/unit/data_operation_timing_tb.sv", "tb/unit/multiply_sequence_tb.sv", "tb/unit/pipeline_refill_timing_tb.sv", "tb/unit/single_transfer_timing_tb.sv", "tb/unit/block_transfer_timing_tb.sv", "tb/unit/swap_timing_tb.sv"]},
   "verified_rows": [
     "ARM9TDMI-TIMING-DP-001",
     "ARM9TDMI-TIMING-DP-002",
@@ -81,6 +81,8 @@
     "ARM9TDMI-TIMING-STM-002",
     "ARM9TDMI-TIMING-SWP-001",
     "ARM9TDMI-TIMING-SWP-002",
+    "ARM9TDMI-TIMING-MUL-001",
+    "ARM9TDMI-TIMING-MULL-001",
     "ARM9TDMI-TIMING-MRS-001",
     "ARM9TDMI-TIMING-MSR-001",
     "ARM9TDMI-TIMING-MSR-002"
@@ -95,5 +97,5 @@
       "resolution": "Use 2N because Table 7-2 gives the instruction's cycle-aligned bus activity, the two transfers use the same address with a read-to-write direction change, and the later ARM9E-S detailed Table 8-25 independently shows two N cycles; retain exact ARM9TDMI chronological order as unspecified"
     }
   ],
-  "notes": "Data-operation, single/block-transfer, swap, branch/exception refill, and MRS/MSR cycle counts and aggregate instruction/data bus class counts are verified. The final-word LDM interlock omitted by Table 7-2 is derived from §7.2.4 and Figure 7-4. DDI0180A does not publish complete chronological instruction/data-bus classifications for the multi-cycle rows, so those per-cycle classes remain explicitly UNSPECIFIED rather than inferred from ARM9E-S."
+  "notes": "Data-operation, multiply, single/block-transfer, swap, branch/exception refill, and MRS/MSR cycle counts and aggregate instruction/data bus class counts are verified. The final-word LDM interlock omitted by Table 7-2 is derived from §7.2.4 and Figure 7-4. DDI0180A does not publish complete chronological instruction/data-bus classifications for the multi-cycle rows, so those per-cycle classes remain explicitly UNSPECIFIED rather than inferred from ARM9E-S."
 }

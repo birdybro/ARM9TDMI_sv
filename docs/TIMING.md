@@ -23,6 +23,10 @@ exact cycle order.
 
 The currently verified ARM9E-S orders include:
 
+- multiply families: exact Tables 8-11 through 8-16 schedules, with every
+  cycle internal except the final sequential instruction cycle; fixed
+  flag-setting latencies and qualified result interlocks are distinct from
+  ARM9TDMI early termination
 - CLZ: one `S / I` cycle, with ARM9TDMI profile rejection
 - QADD/QDADD/QSUB/QDSUB: normal `S / I`; a following instruction that needs
   the result in its first Execute cycle gets `I,S / I,I`. First-Memory-cycle
@@ -45,6 +49,12 @@ The currently verified ARM9E-S orders include:
 
 Here `I`, `N`, and `S` mean internal, nonsequential, and sequential bus cycles. A
 slash separates instruction-bus and data-bus order.
+
+ARM9TDMI multiply sequencing verifies every early-termination class `m=1..4`
+for each common short/long multiply family and both signed and unsigned class
+rules. DDI0180A publishes `1S+(k)I` aggregate instruction counts but not their
+chronological order, so the instruction-cycle type remains `UNSPECIFIED` while
+every data cycle is explicitly internal.
 
 ## DDI0165B one-register LDM conflict
 
@@ -77,8 +87,8 @@ are machine-readable and covered by the timing-specification tests.
 
 ## Remaining work
 
-Multiply execution sequences, coprocessor operations, wait-state insertion, the
-ARM9TDMI Harvard interfaces, ARM946E-S cache/TCM/write
+Integrated multiply pipeline stages, coprocessor operations, wait-state insertion,
+the ARM9TDMI Harvard interfaces, ARM946E-S cache/TCM/write
 buffer behavior, AHB transactions, debug, reset, interrupt recognition, and a real
 five-stage pipeline are not yet cycle-verified. See `docs/ACCURACY.md` for the full
 status matrix.

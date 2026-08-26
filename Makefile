@@ -23,6 +23,9 @@ ARM_BRANCH_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_isa_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_arm_branch_execute.sv
 MULTIPLIER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_isa_pkg.sv \
 	rtl/arm9_multiplier_timing.sv
+MULTIPLY_SEQUENCE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
+	rtl/arm9_isa_pkg.sv rtl/arm9_timing_pkg.sv \
+	rtl/arm9_multiplier_timing.sv rtl/arm9_multiply_sequence.sv
 MULTIPLY_DECODER_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
 	rtl/arm9_multiply_decoder.sv
 COMMON_MULTIPLY_ALU_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
@@ -136,6 +139,7 @@ DATA_COMPLETE_TB := tb/unit/data_processing_complete_tb.sv
 PC_TB := tb/unit/pc_addressing_tb.sv
 ARM_BRANCH_TB := tb/unit/arm_branch_execute_tb.sv
 MULTIPLIER_TIMING_TB := tb/unit/multiplier_timing_tb.sv
+MULTIPLY_SEQUENCE_TB := tb/unit/multiply_sequence_tb.sv
 MULTIPLY_DECODER_TB := tb/unit/multiply_decoder_tb.sv
 COMMON_MULTIPLY_ALU_TB := tb/unit/common_multiply_alu_tb.sv
 COMMON_MULTIPLY_EXECUTE_TB := tb/unit/common_multiply_execute_tb.sv
@@ -191,7 +195,8 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-status-registers test-shifter test-data-alu test-immediate \
 	test-data-decoder test-data-execute test-pc test-arm-branch \
 	test-data-complete \
-	test-multiplier-timing test-multiply-decoder test-common-multiply-alu \
+	test-multiplier-timing test-multiply-sequence test-multiply-decoder \
+	test-common-multiply-alu \
 	test-common-multiply-execute test-dsp-multiply-decoder \
 	test-dsp-multiply-alu test-dsp-multiply-execute test-clz-execute \
 	test-pld-execute \
@@ -244,6 +249,7 @@ help:
 	@echo "  test-pc         test ARM/Thumb PC read and write rules"
 	@echo "  test-arm-branch test profile-specific ARM B/BL/BX/BLX behavior"
 	@echo "  test-multiplier-timing test profile-specific multiply latency"
+	@echo "  test-multiply-sequence test profile multiply cycle sequencing"
 	@echo "  test-multiply-decoder test common ARM multiply decode space"
 	@echo "  test-common-multiply-alu test common ARM multiply arithmetic"
 	@echo "  test-common-multiply-execute test integrated common ARM multiply"
@@ -338,6 +344,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module multiplier_timing_tb \
 		$(MULTIPLIER_TIMING_RTL_SOURCES) $(MULTIPLIER_TIMING_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module multiply_sequence_tb \
+		$(MULTIPLY_SEQUENCE_RTL_SOURCES) $(MULTIPLY_SEQUENCE_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module multiply_decoder_tb \
 		$(MULTIPLY_DECODER_RTL_SOURCES) $(MULTIPLY_DECODER_TB)
@@ -567,6 +576,14 @@ $(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb: \
 		--Mdir $(BUILD_DIR)/multiplier_timing \
 		--top-module multiplier_timing_tb \
 		$(MULTIPLIER_TIMING_RTL_SOURCES) $(MULTIPLIER_TIMING_TB)
+
+$(BUILD_DIR)/multiply_sequence/Vmultiply_sequence_tb: \
+	$(MULTIPLY_SEQUENCE_RTL_SOURCES) $(MULTIPLY_SEQUENCE_TB)
+	@mkdir -p $(BUILD_DIR)/multiply_sequence
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/multiply_sequence \
+		--top-module multiply_sequence_tb \
+		$(MULTIPLY_SEQUENCE_RTL_SOURCES) $(MULTIPLY_SEQUENCE_TB)
 
 $(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb: \
 	$(MULTIPLY_DECODER_RTL_SOURCES) $(MULTIPLY_DECODER_TB)
@@ -955,6 +972,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/pc_addressing/Vpc_addressing_tb \
 	$(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb \
 	$(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb \
+	$(BUILD_DIR)/multiply_sequence/Vmultiply_sequence_tb \
 	$(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb \
 	$(BUILD_DIR)/common_multiply_alu/Vcommon_multiply_alu_tb \
 	$(BUILD_DIR)/common_multiply_execute/Vcommon_multiply_execute_tb \
@@ -1047,6 +1065,10 @@ test-arm-branch: $(BUILD_DIR)/arm_branch_execute/Varm_branch_execute_tb
 
 test-multiplier-timing: $(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb
 	$(BUILD_DIR)/multiplier_timing/Vmultiplier_timing_tb
+
+test-multiply-sequence: \
+	$(BUILD_DIR)/multiply_sequence/Vmultiply_sequence_tb
+	$(BUILD_DIR)/multiply_sequence/Vmultiply_sequence_tb
 
 test-multiply-decoder: $(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb
 	$(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb
@@ -1198,7 +1220,8 @@ test-swap-complete: $(BUILD_DIR)/swap_complete/Vswap_complete_tb
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
 	test-data-alu test-immediate test-data-decoder test-data-execute \
 	test-data-complete test-pc \
-	test-arm-branch test-multiplier-timing test-multiply-decoder \
+	test-arm-branch test-multiplier-timing test-multiply-sequence \
+	test-multiply-decoder \
 	test-common-multiply-alu test-common-multiply-execute \
 	test-dsp-multiply-decoder test-dsp-multiply-alu \
 	test-dsp-multiply-execute test-clz-execute test-pld-execute \
