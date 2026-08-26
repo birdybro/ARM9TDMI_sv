@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-IMMEDIATE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "An ARM data-processing immediate expands by rotating the zero-extended immediate byte right by twice rotate_imm; carry is the old C flag for rotation zero and expanded bit 31 otherwise.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.1.3"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_immediate_expander.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/immediate_expander_tb.sv"]}
+    }
+  ]
+}
