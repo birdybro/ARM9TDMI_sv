@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM9TDMI-LDM-PC-SEMANTICS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "pc_semantics",
+      "statement": "ARMv4T LDM without SPSR restoration ignores loaded PC bits[1:0], enters ARM state, and uses the word-aligned target.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.20 LDM(1), architecture-version behavior"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_block_pc_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/block_pc_complete_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-LDM-PC-SEMANTICS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "For ARM946E-S LDM without SPSR restoration, loaded PC bit 0 selects ARM/Thumb state and the target clears bit 0 when CP15 Control bit 15 is clear; loaded bits[1:0]=10 are UNPREDICTABLE. Control bit 15 set disables loading T and selects the word-aligned ARM-state behavior.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.20 LDM(1), ARMv5 behavior and ARM/Thumb state transfer note"},
+        {"source": "DDI0201D", "locator": "§2.3.5 Control Register bit 15, Disable loading TBIT"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_block_pc_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/block_pc_complete_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-LDM-EXCEPTION-RETURN-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "A successful S-bit LDM including R15 restores CPSR from SPSR and derives the branch state from restored SPSR.T; the loaded PC value is aligned for that restored state rather than selecting state from loaded bit 0.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.22 LDM(3) description and operation"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_block_pc_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/block_pc_complete_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-LDM-PC-DATA-ABORT-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "abort_and_ordering",
+      "statement": "A precise Data Abort suppresses the LDM PC write and SPSR-to-CPSR restoration; exception entry determines the visible PC instead.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.6.6 Effects of data-aborted instructions, rules 1 and 7"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_block_pc_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/block_pc_complete_tb.sv"]}
+    }
+  ]
+}
