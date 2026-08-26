@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-DSP-MULTIPLY-ARITH-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "ARMv5TE DSP multiplies perform signed selected-halfword products for SMLAxy, SMULxy, and SMLALxy; SMLAWy and SMULWy multiply a signed word by a selected signed halfword and use product bits 47 through 16; SMLALxy accumulates a sign-extended product modulo 2^64.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.74; §A4.1.77; §A4.1.79; §A4.1.86; §A4.1.88"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9e_dsp_multiply_alu.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/dsp_multiply_alu_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-DSP-MULTIPLY-Q-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "SMLAxy and SMLAWy set the sticky CPSR Q flag on signed overflow of their 32-bit accumulation; SMULxy, SMULWy, and SMLALxy leave Q unchanged, and every DSP multiply leaves N, Z, C, and V unchanged.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.74 Operation/Notes; §A4.1.77 Notes; §A4.1.79 Operation/Notes; §A4.1.86 Notes; §A4.1.88 Notes"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9e_dsp_multiply_alu.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/dsp_multiply_alu_tb.sv"]}
+    }
+  ]
+}

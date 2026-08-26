@@ -31,6 +31,8 @@ COMMON_MULTIPLY_EXECUTE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_common_multiply_execute.sv
 DSP_MULTIPLY_DECODER_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_isa_pkg.sv rtl/arm9_dsp_multiply_decoder.sv
+DSP_MULTIPLY_ALU_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
+	rtl/arm9e_dsp_multiply_alu.sv
 ARM9TDMI_TB := tb/unit/profile_arm9tdmi_tb.sv
 ARM946ES_TB := tb/unit/profile_arm946es_tb.sv
 CONDITION_TB := tb/unit/condition_eval_tb.sv
@@ -48,6 +50,7 @@ MULTIPLY_DECODER_TB := tb/unit/multiply_decoder_tb.sv
 COMMON_MULTIPLY_ALU_TB := tb/unit/common_multiply_alu_tb.sv
 COMMON_MULTIPLY_EXECUTE_TB := tb/unit/common_multiply_execute_tb.sv
 DSP_MULTIPLY_DECODER_TB := tb/unit/dsp_multiply_decoder_tb.sv
+DSP_MULTIPLY_ALU_TB := tb/unit/dsp_multiply_alu_tb.sv
 
 VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 
@@ -57,7 +60,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-data-decoder test-data-execute test-pc test-arm-branch \
 	test-multiplier-timing test-multiply-decoder test-common-multiply-alu \
 	test-common-multiply-execute test-dsp-multiply-decoder test-formal \
-	synth regression clean
+	test-dsp-multiply-alu synth regression clean
 
 all: test
 
@@ -83,6 +86,7 @@ help:
 	@echo "  test-common-multiply-alu test common ARM multiply arithmetic"
 	@echo "  test-common-multiply-execute test integrated common ARM multiply"
 	@echo "  test-dsp-multiply-decoder test ARMv5TE DSP multiply decode"
+	@echo "  test-dsp-multiply-alu test ARMv5TE DSP multiply arithmetic"
 	@echo "  test-arm9tdmi   run ARM9TDMI-profile tests"
 	@echo "  test-arm946es   run ARM946E-S-profile tests"
 	@echo "  test-timing     validate timing-oracle specification tests"
@@ -140,6 +144,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module dsp_multiply_decoder_tb \
 		$(DSP_MULTIPLY_DECODER_RTL_SOURCES) $(DSP_MULTIPLY_DECODER_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module dsp_multiply_alu_tb \
+		$(DSP_MULTIPLY_ALU_RTL_SOURCES) $(DSP_MULTIPLY_ALU_TB)
 
 $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb: $(PROFILE_RTL_SOURCES) $(ARM9TDMI_TB)
 	@mkdir -p $(BUILD_DIR)/profile_arm9tdmi
@@ -252,6 +259,14 @@ $(BUILD_DIR)/dsp_multiply_decoder/Vdsp_multiply_decoder_tb: \
 		--top-module dsp_multiply_decoder_tb \
 		$(DSP_MULTIPLY_DECODER_RTL_SOURCES) $(DSP_MULTIPLY_DECODER_TB)
 
+$(BUILD_DIR)/dsp_multiply_alu/Vdsp_multiply_alu_tb: \
+	$(DSP_MULTIPLY_ALU_RTL_SOURCES) $(DSP_MULTIPLY_ALU_TB)
+	@mkdir -p $(BUILD_DIR)/dsp_multiply_alu
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/dsp_multiply_alu \
+		--top-module dsp_multiply_alu_tb \
+		$(DSP_MULTIPLY_ALU_RTL_SOURCES) $(DSP_MULTIPLY_ALU_TB)
+
 compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/profile_arm946es/Vprofile_arm946es_tb \
 	$(BUILD_DIR)/condition_eval/Vcondition_eval_tb \
@@ -268,7 +283,8 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/multiply_decoder/Vmultiply_decoder_tb \
 	$(BUILD_DIR)/common_multiply_alu/Vcommon_multiply_alu_tb \
 	$(BUILD_DIR)/common_multiply_execute/Vcommon_multiply_execute_tb \
-	$(BUILD_DIR)/dsp_multiply_decoder/Vdsp_multiply_decoder_tb
+	$(BUILD_DIR)/dsp_multiply_decoder/Vdsp_multiply_decoder_tb \
+	$(BUILD_DIR)/dsp_multiply_alu/Vdsp_multiply_alu_tb
 
 test-unit:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py' -v
@@ -324,11 +340,14 @@ test-common-multiply-execute: $(BUILD_DIR)/common_multiply_execute/Vcommon_multi
 test-dsp-multiply-decoder: $(BUILD_DIR)/dsp_multiply_decoder/Vdsp_multiply_decoder_tb
 	$(BUILD_DIR)/dsp_multiply_decoder/Vdsp_multiply_decoder_tb
 
+test-dsp-multiply-alu: $(BUILD_DIR)/dsp_multiply_alu/Vdsp_multiply_alu_tb
+	$(BUILD_DIR)/dsp_multiply_alu/Vdsp_multiply_alu_tb
+
 test-rtl-unit: test-condition test-register-file test-status-registers test-shifter \
 	test-data-alu test-immediate test-data-decoder test-data-execute test-pc \
 	test-arm-branch test-multiplier-timing test-multiply-decoder \
 	test-common-multiply-alu test-common-multiply-execute \
-	test-dsp-multiply-decoder
+	test-dsp-multiply-decoder test-dsp-multiply-alu
 
 test-timing:
 	$(PYTHON) -m unittest discover -s tests/timing -p 'test_*.py' -v
