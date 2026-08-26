@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-ARM-CLZ-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "CLZ executes only when its ARM condition passes, writes the number of zero bits preceding the most-significant one (32 for a zero operand), and emits no condition-flag write.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.13 CLZ"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_clz_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/clz_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-CLZ-ENCODING-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "CLZ uses the ARMv5 fixed encoding fields and is UNPREDICTABLE if either Rd or Rm is R15.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.13 encoding and operand constraints"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_clz_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/clz_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-NO-ARM-CLZ-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "profiles",
+      "statement": "The ARM9TDMI ARMv4T profile treats the ARMv5 CLZ encoding as profile-illegal and cannot issue a destination write for it.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§1.1 ARMv4T architecture"}, {"source": "DDI0100I", "locator": "§A4.1.13 Architecture version"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_clz_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/clz_execute_tb.sv"]}
+    }
+  ]
+}
