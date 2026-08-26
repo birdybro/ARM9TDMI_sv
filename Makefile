@@ -85,6 +85,9 @@ PSR_TRANSFER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_timing_pkg.sv rtl/arm9_psr_transfer_timing.sv
 DATA_OPERATION_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_timing_pkg.sv rtl/arm9_data_operation_timing.sv
+CLZ_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
+	rtl/arm9_timing_pkg.sv rtl/arm9_data_operation_timing.sv \
+	rtl/arm9_clz_timing.sv
 PIPELINE_REFILL_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_timing_pkg.sv rtl/arm9_pipeline_refill_timing.sv
 SINGLE_TRANSFER_TIMING_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
@@ -160,6 +163,7 @@ MRS_EXECUTE_TB := tb/unit/mrs_execute_tb.sv
 MSR_EXECUTE_TB := tb/unit/msr_execute_tb.sv
 PSR_TRANSFER_TIMING_TB := tb/unit/psr_transfer_timing_tb.sv
 DATA_OPERATION_TIMING_TB := tb/unit/data_operation_timing_tb.sv
+CLZ_TIMING_TB := tb/unit/clz_timing_tb.sv
 PIPELINE_REFILL_TIMING_TB := tb/unit/pipeline_refill_timing_tb.sv
 SINGLE_TRANSFER_TIMING_TB := tb/unit/single_transfer_timing_tb.sv
 BLOCK_TRANSFER_TIMING_TB := tb/unit/block_transfer_timing_tb.sv
@@ -201,6 +205,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-msr-execute \
 	test-psr-transfer-timing \
 	test-data-operation-timing \
+	test-clz-timing \
 	test-pipeline-refill-timing \
 	test-single-transfer-timing \
 	test-block-transfer-timing \
@@ -264,6 +269,7 @@ help:
 	@echo "  test-msr-execute test profile/privilege-filtered CPSR/SPSR writes"
 	@echo "  test-psr-transfer-timing test profile-specific MRS/MSR cycles"
 	@echo "  test-data-operation-timing test profile data-operation cycles"
+	@echo "  test-clz-timing test ARM946E-S CLZ cycle"
 	@echo "  test-pipeline-refill-timing test branch/exception refill cycles"
 	@echo "  test-single-transfer-timing test profile LDR/STR cycles"
 	@echo "  test-block-transfer-timing test profile LDM/STM cycles"
@@ -414,6 +420,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module data_operation_timing_tb \
 		$(DATA_OPERATION_TIMING_RTL_SOURCES) $(DATA_OPERATION_TIMING_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module clz_timing_tb \
+		$(CLZ_TIMING_RTL_SOURCES) $(CLZ_TIMING_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module pipeline_refill_timing_tb \
 		$(PIPELINE_REFILL_TIMING_RTL_SOURCES) $(PIPELINE_REFILL_TIMING_TB)
@@ -783,6 +792,14 @@ $(BUILD_DIR)/data_operation_timing/Vdata_operation_timing_tb: \
 		--top-module data_operation_timing_tb \
 		$(DATA_OPERATION_TIMING_RTL_SOURCES) $(DATA_OPERATION_TIMING_TB)
 
+$(BUILD_DIR)/clz_timing/Vclz_timing_tb: \
+	$(CLZ_TIMING_RTL_SOURCES) $(CLZ_TIMING_TB)
+	@mkdir -p $(BUILD_DIR)/clz_timing
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/clz_timing \
+		--top-module clz_timing_tb \
+		$(CLZ_TIMING_RTL_SOURCES) $(CLZ_TIMING_TB)
+
 $(BUILD_DIR)/pipeline_refill_timing/Vpipeline_refill_timing_tb: \
 	$(PIPELINE_REFILL_TIMING_RTL_SOURCES) $(PIPELINE_REFILL_TIMING_TB)
 	@mkdir -p $(BUILD_DIR)/pipeline_refill_timing
@@ -951,6 +968,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/msr_execute/Vmsr_execute_tb \
 	$(BUILD_DIR)/psr_transfer_timing/Vpsr_transfer_timing_tb \
 	$(BUILD_DIR)/data_operation_timing/Vdata_operation_timing_tb \
+	$(BUILD_DIR)/clz_timing/Vclz_timing_tb \
 	$(BUILD_DIR)/pipeline_refill_timing/Vpipeline_refill_timing_tb \
 	$(BUILD_DIR)/single_transfer_timing/Vsingle_transfer_timing_tb \
 	$(BUILD_DIR)/block_transfer_timing/Vblock_transfer_timing_tb \
@@ -1104,6 +1122,9 @@ test-data-operation-timing: \
 	$(BUILD_DIR)/data_operation_timing/Vdata_operation_timing_tb
 	$(BUILD_DIR)/data_operation_timing/Vdata_operation_timing_tb
 
+test-clz-timing: $(BUILD_DIR)/clz_timing/Vclz_timing_tb
+	$(BUILD_DIR)/clz_timing/Vclz_timing_tb
+
 test-pipeline-refill-timing: \
 	$(BUILD_DIR)/pipeline_refill_timing/Vpipeline_refill_timing_tb
 	$(BUILD_DIR)/pipeline_refill_timing/Vpipeline_refill_timing_tb
@@ -1167,7 +1188,7 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-address-mode4 test-block-transfer-prepare test-block-pc-complete \
 	test-exception-entry test-exception-arbiter test-swi-execute \
 	test-psr-transfer-decoder test-mrs-execute test-msr-execute \
-	test-psr-transfer-timing test-data-operation-timing \
+	test-psr-transfer-timing test-data-operation-timing test-clz-timing \
 	test-pipeline-refill-timing test-single-transfer-timing \
 	test-block-transfer-timing test-doubleword-transfer-timing \
 	test-pld-timing test-swap-timing \

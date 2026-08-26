@@ -23,6 +23,7 @@ exact cycle order.
 
 The currently verified ARM9E-S orders include:
 
+- CLZ: one `S / I` cycle, with ARM9TDMI profile rejection
 - data operations: normal `S`; register shift `I,S`; PC result `N,S,S`; both
   qualifications `I,N,S,S`
 - LDR/STR: normal `S/N`; word load-use `I,S / N,I`; byte, halfword, or unaligned
