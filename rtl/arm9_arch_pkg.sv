@@ -9,6 +9,16 @@ package arm9_arch_pkg;
     ARM9_MODE_SYSTEM     = 5'b11111
   } arm9_mode_e;
 
+  typedef enum logic [2:0] {
+    ARM9_EXCEPTION_RESET,
+    ARM9_EXCEPTION_UNDEFINED,
+    ARM9_EXCEPTION_SWI,
+    ARM9_EXCEPTION_PREFETCH_ABORT,
+    ARM9_EXCEPTION_DATA_ABORT,
+    ARM9_EXCEPTION_IRQ,
+    ARM9_EXCEPTION_FIQ
+  } arm9_exception_kind_e;
+
   function automatic logic mode_is_valid(input arm9_mode_e mode);
     case (mode)
       ARM9_MODE_USER,

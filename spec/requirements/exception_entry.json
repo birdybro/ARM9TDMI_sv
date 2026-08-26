@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-EXCEPTION-ENTRY-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "exceptions",
+      "statement": "Exception entry selects the documented exception mode and vector, saves the pre-exception CPSR into that mode's SPSR except on Reset, enters ARM state, disables IRQ, additionally disables FIQ for Reset/FIQ, and requests a pipeline flush. Reset LR and SPSR values remain explicitly UNPREDICTABLE.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.6 Table A2-4 and §A2.6.2-§A2.6.9"},
+        {"source": "DDI0165B", "locator": "§2.9.11 Tables 2-4 and 2-5"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_exception_entry.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/exception_entry_tb.sv"]}
+    },
+    {
+      "id": "COMMON-EXCEPTION-LR-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "Undefined and SWI save the next instruction address; Prefetch Abort saves faulting instruction plus 4; Data Abort saves faulting instruction plus 8; IRQ and FIQ save the next instruction address plus 4.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.6.3-§A2.6.9"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_exception_entry.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/exception_entry_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-EXCEPTION-VECTORS-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "exceptions",
+      "statement": "ARM9TDMI Rev 3 exception vectors use base 0x00000000 when HIVECS is low and 0xFFFF0000 when HIVECS is high.",
+      "source_refs": [{"source": "DDI0180A", "locator": "Appendix A HIVECS signal description"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_exception_entry.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/exception_entry_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-EXCEPTION-VECTORS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "exceptions",
+      "statement": "ARM946E-S exception vectors use the base selected by CP15 Control bit 13; that bit is initialized from VINITHI during reset.",
+      "source_refs": [{"source": "DDI0201D", "locator": "§2.3.5 Control Register bit 13; Appendix B VINITHI"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_exception_entry.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/exception_entry_tb.sv"]}
+    }
+  ]
+}
