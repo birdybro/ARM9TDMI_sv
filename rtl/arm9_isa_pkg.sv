@@ -51,4 +51,11 @@ package arm9_isa_pkg;
     ARM9_DSP_MULTIPLY_SMLAL_XY,
     ARM9_DSP_MULTIPLY_SMUL_XY
   } arm9_dsp_multiply_kind_e;
+
+  typedef enum logic [1:0] {
+    ARM9_SATURATING_QADD  = 2'b00,
+    ARM9_SATURATING_QSUB  = 2'b01,
+    ARM9_SATURATING_QDADD = 2'b10,
+    ARM9_SATURATING_QDSUB = 2'b11
+  } arm9_saturating_kind_e;
 endpackage

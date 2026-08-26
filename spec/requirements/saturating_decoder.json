@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-ARM-QADD-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "QADD, QSUB, QDADD, and QDSUB decode from their ARMv5TE opcode fields with bits[11:8] SBZ and bits[7:4] equal to 0101; bits[22:21] select the operation.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.46 QADD; §A4.1.50 QDADD; §A4.1.51 QDSUB; §A4.1.52 QSUB"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_saturating_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/saturating_decoder_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-QADD-REGISTERS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "Specifying R15 as Rd, Rm, or Rn for a saturating arithmetic instruction is UNPREDICTABLE.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.46, §A4.1.50-§A4.1.52 Notes: Use of R15"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_saturating_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/saturating_decoder_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-NO-ARM-QADD-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "profiles",
+      "statement": "The ARM9TDMI ARMv4T profile does not make ARMv5TE saturating arithmetic encodings legal.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§1.1 ARMv4T architecture"}, {"source": "DDI0100I", "locator": "§A4.1.46, §A4.1.50-§A4.1.52 Architecture version"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_saturating_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/saturating_decoder_tb.sv"]}
+    }
+  ]
+}
