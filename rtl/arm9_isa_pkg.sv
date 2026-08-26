@@ -32,4 +32,15 @@ package arm9_isa_pkg;
     ARM9_BRANCH_BLX_IMMEDIATE,
     ARM9_BRANCH_BLX_REGISTER
   } arm9_branch_kind_e;
+
+  typedef enum logic [2:0] {
+    ARM9_MULTIPLY_MUL,
+    ARM9_MULTIPLY_MLA,
+    ARM9_MULTIPLY_UMULL,
+    ARM9_MULTIPLY_UMLAL,
+    ARM9_MULTIPLY_SMULL,
+    ARM9_MULTIPLY_SMLAL,
+    ARM9_MULTIPLY_DSP_SHORT,
+    ARM9_MULTIPLY_DSP_LONG
+  } arm9_multiply_kind_e;
 endpackage

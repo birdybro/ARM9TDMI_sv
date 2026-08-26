@@ -28,7 +28,8 @@ Status vocabulary:
 | Five-stage pipelines | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Instruction cycle summary tables | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | Detailed hazards/interlocks | PARTIAL | NOT IMPLEMENTED | NOT IMPLEMENTED |
-| ARM9TDMI multiplier termination | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
+| ARM9TDMI multiplier termination | BASELINED | VERIFIED latency classifier | VERIFIED signed/unsigned class boundaries and cycle equations |
+| ARM946E-S multiplier timing | BASELINED | VERIFIED class/interlock classifier | VERIFIED fixed class, flag-setting, and qualified dependency cycles |
 | ARM9TDMI Harvard interface | BASELINED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | External coprocessor protocol | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | ARM946E-S CP15 | PARTIAL | NOT IMPLEMENTED | NOT IMPLEMENTED |

@@ -25,8 +25,8 @@
       "category": "multiplier_timing",
       "statement": "Multiply latency uses operand-dependent early termination with m from one through four, selected from high-order sign-extension or zero patterns in the multiplier operand.",
       "source_refs": [{"source": "DDI0180A", "locator": "§7.1.1"}],
-      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
-      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_multiplier_timing.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/multiplier_timing_tb.sv"]}
     },
     {
       "id": "ARM946ES-MULTIPLIER-001",
@@ -34,8 +34,8 @@
       "category": "multiplier_timing",
       "statement": "The enhanced ARM9E-S multiplier uses fixed instruction-class timing and a one-cycle dependency interlock where specified; latency does not use the ARM9TDMI multiplier operand early-termination classes.",
       "source_refs": [{"source": "DDI0165B", "locator": "§8.1 Table 8-2; §8.10; §8.10.1"}],
-      "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
-      "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_multiplier_timing.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/multiplier_timing_tb.sv"]}
     },
     {
       "id": "ARM9TDMI-MEMIF-001",
