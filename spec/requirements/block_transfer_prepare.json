@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-BLOCK-PREPARE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A valid condition-passing LDM/STM emits an ascending multiword descriptor from the Addressing Mode 4 start through end address, carrying the ordered register list, word count, PC-load and base-writeback intents. A failed condition emits no memory sequence or writeback.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.12; §A4.1.20-§A4.1.22; §A4.1.97-§A4.1.98; §A5.4"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_block_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/block_transfer_prepare_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-BLOCK-PRIVILEGE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "status_and_modes",
+      "statement": "LDM/STM user-bank transfer and LDM exception return are reported as runtime UNPREDICTABLE in User or System mode. In an exception mode, S selects User-bank transfer unless LDM loads R15, in which case it requests SPSR restoration after the PC load.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.12 S bit; §A4.1.21 LDM(2); §A4.1.22 LDM(3); §A4.1.98 STM(2)"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_block_transfer_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/block_transfer_prepare_tb.sv"]}
+    }
+  ]
+}
