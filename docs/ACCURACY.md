@@ -20,7 +20,7 @@ Status vocabulary:
 | Domain | Specification | RTL | Verification |
 |---|---|---|---|
 | Profile/revision selection | BASELINED | VERIFIED configuration package | VERIFIED for both profiles |
-| ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14, CPSR/SPSR banks) | VERIFIED bank selection, PSR masks, and defined reset fields; PC/instruction semantics not implemented |
+| ARM programmer-visible state | PARTIAL | PARTIAL (R0-R14, CPSR/SPSR banks, basic PC addressing) | VERIFIED bank selection, PSR masks, reset fields, ordinary PC reads/writes, and BX targets |
 | ARM condition evaluation | BASELINED | VERIFIED | VERIFIED (256 combinations) |
 | ARM instruction set | PARTIAL | PARTIAL (non-PC data-processing execute path) | VERIFIED ALU/shifter/immediate/decode integration; PC-special and other instruction classes not implemented |
 | Thumb instruction set | PLANNED | NOT IMPLEMENTED | NOT IMPLEMENTED |

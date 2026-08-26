@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-PC-READ-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "An ordinary instruction read of R15 returns its instruction address plus 8 in ARM state and plus 4 in Thumb state.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.4.3 Reading the program counter"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_pc_addressing.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/pc_addressing_tb.sv"]}
+    },
+    {
+      "id": "COMMON-PC-WRITE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "For ordinary R15 writes, Thumb state ignores bit 0 and remains in Thumb state; ARMv4/v5 ARM-state writes require bits[1:0] to be zero and are UNPREDICTABLE otherwise.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A2.4.3 Writing the program counter"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_pc_addressing.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/pc_addressing_tb.sv"]}
+    },
+    {
+      "id": "COMMON-PC-BX-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "BX selects Thumb state from target bit 0 and clears that bit in the branch target; selecting ARM state with target bits[1:0]=10 is UNPREDICTABLE.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.10"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_pc_addressing.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/pc_addressing_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-PC-STORE-OFFSET-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "pc_semantics",
+      "statement": "The architecture permits ARM STR/STM of R15 to store instruction address plus 8 or plus 12 consistently. The reviewed ARM9TDMI Rev 3 TRM does not explicitly identify its choice; no implementation claim is made yet.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.4.3 Reading the program counter"},
+        {"source": "DDI0180A", "locator": "§1.1; §3 (no explicit stored-PC selection found in reviewed revision)"}
+      ],
+      "implementation": {"status": "UNSPECIFIED_BY_PUBLIC_SOURCE", "rtl": []},
+      "verification": {"status": "UNSPECIFIED_BY_PUBLIC_SOURCE", "tests": []}
+    },
+    {
+      "id": "ARM946ES-PC-STORE-OFFSET-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "pc_semantics",
+      "statement": "The architecture permits ARM STR/STM of R15 to store instruction address plus 8 or plus 12 consistently. The reviewed ARM9E-S Rev 1 and ARM946E-S r1p1 TRMs do not explicitly identify their choice; no implementation claim is made yet.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.4.3 Reading the program counter"},
+        {"source": "DDI0165B", "locator": "§1.1.1 Figure 1-1 (pipeline evidence only; no explicit stored-PC selection found)"},
+        {"source": "DDI0201D", "locator": "reviewed processor memory-system chapters; no explicit stored-PC selection found"}
+      ],
+      "implementation": {"status": "UNSPECIFIED_BY_PUBLIC_SOURCE", "rtl": []},
+      "verification": {"status": "UNSPECIFIED_BY_PUBLIC_SOURCE", "tests": []}
+    }
+  ]
+}
