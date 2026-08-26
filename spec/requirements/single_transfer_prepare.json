@@ -29,10 +29,10 @@
       "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_transfer_prepare_tb.sv"]}
     },
     {
-      "id": "COMMON-ARM-STR-PC-UNCERTAINTY-SIGNAL-001",
+      "id": "COMMON-ARM-STR-PC-SPECIAL-CASE-001",
       "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
       "category": "pc_semantics",
-      "statement": "A legal word STR using R15 is identified as requiring the implementation-defined stored-PC value; the preparation stage accepts that value from its caller rather than selecting an undocumented +8 or +12 behavior.",
+      "statement": "A legal word STR using R15 is identified for profile-specific stored-PC selection; the preparation stage accepts the selected value from its caller rather than treating an ordinary R15 read as the store value.",
       "source_refs": [{"source": "DDI0100I", "locator": "§A2.4.3 Reading the program counter; §A4.1.99 STR"}],
       "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_single_transfer_prepare.sv"]},
       "verification": {"status": "VERIFIED", "tests": ["tb/unit/single_transfer_prepare_tb.sv"]}

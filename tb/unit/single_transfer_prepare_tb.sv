@@ -29,7 +29,7 @@ module single_transfer_prepare_tb;
   logic [7:0] memory_write_byte_value;
   logic base_writeback_pending;
   logic [31:0] base_writeback_value;
-  logic store_pc_value_implementation_defined;
+  logic store_pc_special_case;
   int unsigned cases_checked;
 
   arm9_single_transfer_prepare dut (.*);
@@ -127,7 +127,7 @@ module single_transfer_prepare_tb;
                     (register_form[0] ? 4'h3 : 4'h4));
             assert (memory_write_value == store_register_value);
             assert (memory_write_byte_value == store_register_value[7:0]);
-            assert (!store_pc_value_implementation_defined);
+            assert (!store_pc_special_case);
             assert (!unconditional_space);
             cases_checked++;
           end
@@ -135,12 +135,12 @@ module single_transfer_prepare_tb;
       end
     end
 
-    // REQ: COMMON-ARM-STR-PC-UNCERTAINTY-SIGNAL-001
+    // REQ: COMMON-ARM-STR-PC-SPECIAL-CASE-001
     instruction = 32'he581_f004;
     store_register_value = 32'hfeed_c0de;
     #1ps;
     assert (encoding_valid && memory_request_valid && memory_write);
-    assert (store_pc_value_implementation_defined);
+    assert (store_pc_special_case);
     assert (memory_write_value == 32'hfeed_c0de);
     cases_checked++;
 
@@ -148,14 +148,14 @@ module single_transfer_prepare_tb;
     zero = 1'b0;
     #1ps;
     assert (encoding_valid && !memory_request_valid && !memory_write);
-    assert (store_pc_value_implementation_defined);
+    assert (store_pc_special_case);
     cases_checked++;
 
     instruction = 32'he591_f004;
     #1ps;
     assert (encoding_valid && memory_request_valid && transfer_load);
     assert (!unpredictable_access);
-    assert (!store_pc_value_implementation_defined);
+    assert (!store_pc_special_case);
     cases_checked++;
 
     instruction = 32'he591_f001;
@@ -169,7 +169,7 @@ module single_transfer_prepare_tb;
     #1ps;
     assert (unpredictable_encoding && !encoding_valid);
     assert (!memory_request_valid && !base_writeback_pending);
-    assert (!store_pc_value_implementation_defined);
+    assert (!store_pc_special_case);
     cases_checked++;
 
     instruction = 32'hf591_2004;

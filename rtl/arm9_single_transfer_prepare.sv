@@ -29,7 +29,7 @@ module arm9_single_transfer_prepare (
   output logic [7:0]  memory_write_byte_value,
   output logic        base_writeback_pending,
   output logic [31:0] base_writeback_value,
-  output logic        store_pc_value_implementation_defined
+  output logic        store_pc_special_case
 );
   logic [3:0] decoded_condition;
   logic decoded_writeback;
@@ -95,7 +95,7 @@ module arm9_single_transfer_prepare (
     memory_write_value      = store_register_value;
     memory_write_byte_value = store_register_value[7:0];
     base_writeback_pending = execute_valid && decoded_writeback;
-    store_pc_value_implementation_defined = encoding_valid &&
+    store_pc_special_case = encoding_valid &&
       !transfer_load && !transfer_byte && (data_register == 4'hf);
   end
 
