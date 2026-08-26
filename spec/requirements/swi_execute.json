@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-SWI-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A conditional ARM encoding with bits[27:24]=1111 requests the Software Interrupt exception only when its condition passes, preserves the 24-bit comment for software use, and supplies instruction address plus 4 as the architectural next-instruction link input. Condition 1111 is not this conditional SWI encoding.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.16; §A4.1.107 SWI; §A2.6.4 Software Interrupt exception"},
+        {"source": "DDI0180A", "locator": "§7.1 Table 7-2 SWI row"},
+        {"source": "DDI0165B", "locator": "§8.20 Software interrupt, undefined instruction, and exception entry"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_swi_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/swi_execute_tb.sv"]}
+    }
+  ]
+}
