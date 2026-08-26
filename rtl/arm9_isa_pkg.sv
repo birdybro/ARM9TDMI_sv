@@ -43,4 +43,12 @@ package arm9_isa_pkg;
     ARM9_MULTIPLY_DSP_SHORT,
     ARM9_MULTIPLY_DSP_LONG
   } arm9_multiply_kind_e;
+
+  typedef enum logic [2:0] {
+    ARM9_DSP_MULTIPLY_SMLA_XY,
+    ARM9_DSP_MULTIPLY_SMLAW_Y,
+    ARM9_DSP_MULTIPLY_SMULW_Y,
+    ARM9_DSP_MULTIPLY_SMLAL_XY,
+    ARM9_DSP_MULTIPLY_SMUL_XY
+  } arm9_dsp_multiply_kind_e;
 endpackage

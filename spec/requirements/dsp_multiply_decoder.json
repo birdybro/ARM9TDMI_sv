@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-DSP-MULTIPLY-DECODE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "The ARM946E-S profile decodes the ARMv5TE SMLAxy, SMLAWy, SMULWy, SMLALxy, and SMULxy instruction families, including halfword selectors, operand registers, and short/long multiplier timing class.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.16.3 Figure A3-4; §A4.1.74; §A4.1.77; §A4.1.79; §A4.1.86; §A4.1.88"}, {"source": "DDI0165B", "locator": "§1.2 Table 1-2; §8.10 Tables 8-15 and 8-16"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_dsp_multiply_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/dsp_multiply_decoder_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-DSP-MULTIPLY-OPERANDS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "ARMv5TE DSP multiply encodings using R15 are identified as UNPREDICTABLE, nonaccumulating instructions enforce their SBZ field, and SMLALxy requires distinct destination registers.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.74 Notes; §A4.1.77 Notes; §A4.1.79 Notes; §A4.1.86 Notes; §A4.1.88 Notes"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_dsp_multiply_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/dsp_multiply_decoder_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-NO-DSP-MULTIPLY-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm_instruction_encodings",
+      "statement": "ARMv5TE DSP multiply encodings are profile-illegal in the ARMv4T ARM9TDMI profile and cannot be accepted for execution.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§1.1 ARMv4T architecture"}, {"source": "DDI0100I", "locator": "§A4.1.74, §A4.1.77, §A4.1.79, §A4.1.86, §A4.1.88 Architecture version"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_dsp_multiply_decoder.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/dsp_multiply_decoder_tb.sv"]}
+    }
+  ]
+}
