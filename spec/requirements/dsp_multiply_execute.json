@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-DSP-MULTIPLY-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "ARM946E-S DSP multiply execution composes profile-aware decode, condition evaluation, arithmetic, single- or dual-register write routing, NZCV preservation, and condition-gated sticky-Q setting.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A3.2; §A4.1.74; §A4.1.77; §A4.1.79; §A4.1.86; §A4.1.88"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_dsp_multiply_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/dsp_multiply_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-NO-DSP-MULTIPLY-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "arm_instruction_semantics",
+      "statement": "The ARM9TDMI profile never emits a register or Q-flag write request for an ARMv5TE DSP multiply encoding, including when its ARM condition would otherwise pass.",
+      "source_refs": [{"source": "DDI0180A", "locator": "§1.1 ARMv4T architecture"}, {"source": "DDI0100I", "locator": "DSP multiply Architecture version fields"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_dsp_multiply_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/dsp_multiply_execute_tb.sv"]}
+    }
+  ]
+}
