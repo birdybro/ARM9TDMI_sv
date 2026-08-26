@@ -41,6 +41,8 @@ DSP_MULTIPLY_EXECUTE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_dsp_multiply_execute.sv
 CLZ_EXECUTE_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_condition_eval.sv rtl/arm9_clz_execute.sv
+PLD_EXECUTE_RTL_SOURCES := rtl/arm9_profile_pkg.sv rtl/arm9_isa_pkg.sv \
+	rtl/arm9_barrel_shifter.sv rtl/arm9_pld_execute.sv
 SATURATING_DECODER_RTL_SOURCES := rtl/arm9_profile_pkg.sv \
 	rtl/arm9_isa_pkg.sv rtl/arm9_saturating_decoder.sv
 SATURATING_ALU_RTL_SOURCES := rtl/arm9_isa_pkg.sv \
@@ -134,6 +136,7 @@ DSP_MULTIPLY_DECODER_TB := tb/unit/dsp_multiply_decoder_tb.sv
 DSP_MULTIPLY_ALU_TB := tb/unit/dsp_multiply_alu_tb.sv
 DSP_MULTIPLY_EXECUTE_TB := tb/unit/dsp_multiply_execute_tb.sv
 CLZ_EXECUTE_TB := tb/unit/clz_execute_tb.sv
+PLD_EXECUTE_TB := tb/unit/pld_execute_tb.sv
 SATURATING_DECODER_TB := tb/unit/saturating_decoder_tb.sv
 SATURATING_ALU_TB := tb/unit/saturating_alu_tb.sv
 SATURATING_EXECUTE_TB := tb/unit/saturating_execute_tb.sv
@@ -181,6 +184,7 @@ VERILATOR_COMMON := --Wall --assert --binary --timescale 1ns/1ps
 	test-multiplier-timing test-multiply-decoder test-common-multiply-alu \
 	test-common-multiply-execute test-dsp-multiply-decoder \
 	test-dsp-multiply-alu test-dsp-multiply-execute test-clz-execute \
+	test-pld-execute \
 	test-saturating-decoder test-saturating-alu test-saturating-execute \
 	test-address-mode2 test-single-transfer-prepare test-store-data-select \
 	test-load-data-align test-single-load-complete test-single-store-complete \
@@ -234,6 +238,7 @@ help:
 	@echo "  test-dsp-multiply-alu test ARMv5TE DSP multiply arithmetic"
 	@echo "  test-dsp-multiply-execute test integrated ARMv5TE DSP multiply"
 	@echo "  test-clz-execute test profile-specific ARM CLZ execution"
+	@echo "  test-pld-execute test ARM946E-S PLD address hint execution"
 	@echo "  test-saturating-decoder test ARMv5TE saturating decode"
 	@echo "  test-saturating-alu test ARMv5TE saturating arithmetic"
 	@echo "  test-saturating-execute test integrated saturating execution"
@@ -338,6 +343,9 @@ lint: spec
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module clz_execute_tb \
 		$(CLZ_EXECUTE_RTL_SOURCES) $(CLZ_EXECUTE_TB)
+	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
+		--top-module pld_execute_tb \
+		$(PLD_EXECUTE_RTL_SOURCES) $(PLD_EXECUTE_TB)
 	$(VERILATOR) --lint-only --Wall --assert --timing --timescale 1ns/1ps \
 		--top-module saturating_decoder_tb \
 		$(SATURATING_DECODER_RTL_SOURCES) $(SATURATING_DECODER_TB)
@@ -590,6 +598,14 @@ $(BUILD_DIR)/clz_execute/Vclz_execute_tb: \
 		--Mdir $(BUILD_DIR)/clz_execute \
 		--top-module clz_execute_tb \
 		$(CLZ_EXECUTE_RTL_SOURCES) $(CLZ_EXECUTE_TB)
+
+$(BUILD_DIR)/pld_execute/Vpld_execute_tb: \
+	$(PLD_EXECUTE_RTL_SOURCES) $(PLD_EXECUTE_TB)
+	@mkdir -p $(BUILD_DIR)/pld_execute
+	$(VERILATOR) $(VERILATOR_COMMON) --timing \
+		--Mdir $(BUILD_DIR)/pld_execute \
+		--top-module pld_execute_tb \
+		$(PLD_EXECUTE_RTL_SOURCES) $(PLD_EXECUTE_TB)
 
 $(BUILD_DIR)/saturating_decoder/Vsaturating_decoder_tb: \
 	$(SATURATING_DECODER_RTL_SOURCES) $(SATURATING_DECODER_TB)
@@ -897,6 +913,7 @@ compile: $(BUILD_DIR)/profile_arm9tdmi/Vprofile_arm9tdmi_tb \
 	$(BUILD_DIR)/dsp_multiply_alu/Vdsp_multiply_alu_tb \
 	$(BUILD_DIR)/dsp_multiply_execute/Vdsp_multiply_execute_tb \
 	$(BUILD_DIR)/clz_execute/Vclz_execute_tb \
+	$(BUILD_DIR)/pld_execute/Vpld_execute_tb \
 	$(BUILD_DIR)/saturating_decoder/Vsaturating_decoder_tb \
 	$(BUILD_DIR)/saturating_alu/Vsaturating_alu_tb \
 	$(BUILD_DIR)/saturating_execute/Vsaturating_execute_tb \
@@ -999,6 +1016,9 @@ test-dsp-multiply-execute: $(BUILD_DIR)/dsp_multiply_execute/Vdsp_multiply_execu
 
 test-clz-execute: $(BUILD_DIR)/clz_execute/Vclz_execute_tb
 	$(BUILD_DIR)/clz_execute/Vclz_execute_tb
+
+test-pld-execute: $(BUILD_DIR)/pld_execute/Vpld_execute_tb
+	$(BUILD_DIR)/pld_execute/Vpld_execute_tb
 
 test-saturating-decoder: $(BUILD_DIR)/saturating_decoder/Vsaturating_decoder_tb
 	$(BUILD_DIR)/saturating_decoder/Vsaturating_decoder_tb
@@ -1119,7 +1139,8 @@ test-rtl-unit: test-condition test-register-file test-status-registers test-shif
 	test-arm-branch test-multiplier-timing test-multiply-decoder \
 	test-common-multiply-alu test-common-multiply-execute \
 	test-dsp-multiply-decoder test-dsp-multiply-alu \
-	test-dsp-multiply-execute test-clz-execute test-saturating-decoder \
+	test-dsp-multiply-execute test-clz-execute test-pld-execute \
+	test-saturating-decoder \
 	test-saturating-alu test-saturating-execute test-address-mode2 \
 	test-single-transfer-prepare test-store-data-select test-load-data-align \
 	test-single-load-complete test-single-store-complete test-address-mode3 \

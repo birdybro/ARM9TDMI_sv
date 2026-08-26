@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "ARM946ES-ARM-PLD-ENCODING-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "ARM946E-S implements PLD in the ARMv5TE unconditional instruction space with immediate and scaled-register Addressing Mode 2 offsets.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.16.7 unconditional extension space; §A4.1.45 PLD encoding and architecture version"},
+        {"source": "DDI0165B", "locator": "§8.19 PLD"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_pld_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/pld_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-PLD-EXECUTE-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A valid PLD calculates and broadcasts its preload address as a speculative data hint without modifying programmer-visible state or generating a precise Data Abort.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.45 operation, exceptions, and Data Aborts"},
+        {"source": "DDI0165B", "locator": "§8.19 execute-cycle address and DnSPEC behavior"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_pld_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/pld_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM946ES-ARM-PLD-CONSTRAINTS-001",
+      "profiles": ["ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "PLD is UNPREDICTABLE with P cleared, W set, or R15 used as a register-offset operand; it is never conditional.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.45 syntax and notes; §A5.2 Addressing Mode 2"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_pld_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/pld_execute_tb.sv"]}
+    },
+    {
+      "id": "ARM9TDMI-NO-ARM-PLD-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI"],
+      "category": "profiles",
+      "statement": "The ARM9TDMI ARMv4T profile treats the ARMv5TE PLD encoding as profile-illegal and emits no preload request.",
+      "source_refs": [
+        {"source": "DDI0180A", "locator": "§2.1 ARM architecture v4T"},
+        {"source": "DDI0100I", "locator": "§A4.1.45 Architecture version"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_pld_execute.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/pld_execute_tb.sv"]}
+    }
+  ]
+}
