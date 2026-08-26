@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-SWP-PREPARE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "A valid condition-passing SWP/SWPB emits a locked atomic read-then-write descriptor at the Rn address, with byte/word width and the Rm or Rm[7:0] store value. A condition failure emits no sequence.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A3.13; §A4.1.108 SWP; §A4.1.109 SWPB"},
+        {"source": "DDI0165B", "locator": "§4.8.5 DLOCK"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_swap_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/swap_prepare_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-SWP-UNALIGNED-WORD-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "For a pre-ARMv6 unaligned word SWP, the word memory accesses use the word-aligned address and the loaded word is marked for rotation right by eight times the original address low bits; SWPB uses the exact byte address.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A2.8; §A4.1.108 SWP operation/alignment; §A4.1.109 SWPB"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_swap_prepare.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/swap_prepare_tb.sv"]}
+    }
+  ]
+}
