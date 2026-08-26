@@ -71,6 +71,7 @@ module block_pc_complete_tb;
   initial begin
     logic expected_success;
     logic expected_arm946_tbit;
+    logic expected_restore_unpredictable;
     logic expected_arm946_unpredictable;
 
     completion_valid = 1'b0;
@@ -111,8 +112,12 @@ module block_pc_complete_tb;
                                      pc_case[0];
                   expected_arm946_tbit = !restore_case[0] &&
                                          !disable_case[0];
-                  expected_arm946_unpredictable = expected_success &&
-                    expected_arm946_tbit && (low_case == 2);
+                  expected_restore_unpredictable = expected_success &&
+                    restore_case[0] && !spsr_t_case[0] && low_case[1];
+                  expected_arm946_unpredictable =
+                    expected_restore_unpredictable ||
+                    (expected_success && expected_arm946_tbit &&
+                     (low_case == 2));
                   #1ps;
 
                   assert (tdmi_data_abort_taken ==
@@ -124,17 +129,22 @@ module block_pc_complete_tb;
                   assert (!tdmi_pc_load_tbit_enabled);
                   assert (arm946_pc_load_tbit_enabled ==
                           expected_arm946_tbit);
-                  assert (!tdmi_unpredictable_result);
+                  assert (tdmi_unpredictable_result ==
+                          expected_restore_unpredictable);
                   assert (arm946_unpredictable_result ==
                           expected_arm946_unpredictable);
-                  assert (tdmi_pc_write_valid == expected_success);
+                  assert (tdmi_pc_write_valid ==
+                          (expected_success &&
+                           !expected_restore_unpredictable));
                   assert (arm946_pc_write_valid ==
                           (expected_success &&
                            !expected_arm946_unpredictable));
                   assert (tdmi_cpsr_restore_valid ==
-                          (expected_success && restore_case[0]));
+                          (expected_success && restore_case[0] &&
+                           !expected_restore_unpredictable));
                   assert (arm946_cpsr_restore_valid ==
-                          (expected_success && restore_case[0]));
+                          (expected_success && restore_case[0] &&
+                           !expected_arm946_unpredictable));
 
                   if (restore_case[0]) begin
                     assert (tdmi_pc_write_thumb_state == spsr_t_case[0]);

@@ -26,7 +26,7 @@
       "id": "COMMON-ARM-LDM-EXCEPTION-RETURN-001",
       "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
       "category": "status_and_modes",
-      "statement": "A successful S-bit LDM including R15 restores CPSR from SPSR and derives the branch state from restored SPSR.T; the loaded PC value is aligned for that restored state rather than selecting state from loaded bit 0.",
+      "statement": "A successful S-bit LDM including R15 restores CPSR from SPSR and derives the branch state from restored SPSR.T; the loaded PC value is aligned for that restored state rather than selecting state from loaded bit 0. If restored SPSR.T is zero while loaded PC bit 1 is one, the result is UNPREDICTABLE and no constrained PC/CPSR commit intent is emitted.",
       "source_refs": [{"source": "DDI0100I", "locator": "§A4.1.22 LDM(3) description and operation"}],
       "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_block_pc_complete.sv"]},
       "verification": {"status": "VERIFIED", "tests": ["tb/unit/block_pc_complete_tb.sv"]}

@@ -21,6 +21,8 @@ module arm9_block_pc_complete #(
   import arm9_profile_pkg::*;
 
   logic successful_pc_completion;
+  logic restore_alignment_unpredictable;
+  logic loaded_state_alignment_unpredictable;
 
   always_comb begin
     data_abort_taken = completion_valid && precise_data_abort;
@@ -31,9 +33,12 @@ module arm9_block_pc_complete #(
                            (PROFILE == ARM9_PROFILE_ARM946ES) &&
                            !arm946_disable_loading_tbit;
 
-    unpredictable_result = successful_pc_completion &&
-                           pc_load_tbit_enabled &&
-                           (loaded_pc_value[1:0] == 2'b10);
+    restore_alignment_unpredictable = successful_pc_completion &&
+      restore_cpsr_pending && !spsr_thumb_state && loaded_pc_value[1];
+    loaded_state_alignment_unpredictable = successful_pc_completion &&
+      pc_load_tbit_enabled && (loaded_pc_value[1:0] == 2'b10);
+    unpredictable_result = restore_alignment_unpredictable ||
+                           loaded_state_alignment_unpredictable;
     pc_write_valid = successful_pc_completion && !unpredictable_result;
     cpsr_restore_valid = pc_write_valid && restore_cpsr_pending;
 
@@ -64,8 +69,8 @@ module arm9_block_pc_complete #(
               ((PROFILE != ARM9_PROFILE_ARM946ES) ||
                arm946_disable_loading_tbit || restore_cpsr_pending)));
     assert (!(unpredictable_result &&
-              (!successful_pc_completion || !pc_load_tbit_enabled ||
-               (loaded_pc_value[1:0] != 2'b10))));
+              (!restore_alignment_unpredictable &&
+               !loaded_state_alignment_unpredictable)));
     assert (!(unpredictable_result &&
               (pc_write_valid || cpsr_restore_valid)));
     if (restore_cpsr_pending) begin
