@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-ARM-SWP-COMPLETE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_semantics",
+      "statement": "After both atomic accesses complete without a precise Data Abort, SWP writes the original aligned memory word rotated right by eight times address[1:0], and SWPB writes the zero-extended selected byte, to Rd.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.108 SWP operation, alignment, and Data Abort; §A4.1.109 SWPB"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_swap_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/swap_complete_tb.sv"]}
+    },
+    {
+      "id": "COMMON-ARM-SWP-PRECISE-ABORT-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "abort_and_ordering",
+      "statement": "A precise abort of the SWP/SWPB read cancels the following store, while an abort of either access suppresses the Rd update and requests Data Abort entry.",
+      "source_refs": [
+        {"source": "DDI0100I", "locator": "§A4.1.108 SWP Data Abort; §A4.1.109 SWPB Data Abort"},
+        {"source": "DDI0165B", "locator": "§8.18 Data swap"}
+      ],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_swap_complete.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/swap_complete_tb.sv"]}
+    }
+  ]
+}
