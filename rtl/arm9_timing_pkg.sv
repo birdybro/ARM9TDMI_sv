@@ -6,4 +6,11 @@ package arm9_timing_pkg;
     ARM9_BUS_CYCLE_SEQUENTIAL,
     ARM9_BUS_CYCLE_COPROCESSOR
   } arm9_bus_cycle_e;
+
+  typedef enum logic [1:0] {
+    ARM9_LOAD_TIMING_NORMAL,
+    ARM9_LOAD_TIMING_WORD_INTERLOCK,
+    ARM9_LOAD_TIMING_ROTATE_INTERLOCK,
+    ARM9_LOAD_TIMING_PC_DESTINATION
+  } arm9_load_timing_class_e;
 endpackage
