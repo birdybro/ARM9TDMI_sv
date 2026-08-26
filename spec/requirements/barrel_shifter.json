@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "requirements": [
+    {
+      "id": "COMMON-SHIFTER-IMMEDIATE-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "The ARM immediate barrel shifter implements LSL 0-31, the zero encodings of LSR #32 and ASR #32, ROR 1-31, and ROR #0 as RRX, with the specified carry output.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.1.5; §A5.1.7; §A5.1.9; §A5.1.11; §A5.1.13"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_isa_pkg.sv", "rtl/arm9_barrel_shifter.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/barrel_shifter_tb.sv"]}
+    },
+    {
+      "id": "COMMON-SHIFTER-REGISTER-001",
+      "profiles": ["ARM9_PROFILE_ARM9TDMI", "ARM9_PROFILE_ARM946ES"],
+      "category": "arm_instruction_encodings",
+      "statement": "Register-specified ARM shifts use Rs[7:0] and implement the specified results and carry outputs for amounts 0, 1-31, 32, greater than 32, and ROR multiples of 32.",
+      "source_refs": [{"source": "DDI0100I", "locator": "§A5.1.6; §A5.1.8; §A5.1.10; §A5.1.12"}],
+      "implementation": {"status": "VERIFIED", "rtl": ["rtl/arm9_isa_pkg.sv", "rtl/arm9_barrel_shifter.sv"]},
+      "verification": {"status": "VERIFIED", "tests": ["tb/unit/barrel_shifter_tb.sv"]}
+    }
+  ]
+}
