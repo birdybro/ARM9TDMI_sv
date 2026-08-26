@@ -66,7 +66,12 @@
     {"id": "ARM946ES-TIMING-SMLALXY-001", "operation": "SMLALxy", "qualification": "normal case", "cycles": "2", "instruction_bus": "1S+1I", "data_bus": "2I"},
     {"id": "ARM946ES-TIMING-SMLALXY-002", "operation": "SMLALxy", "qualification": "next instruction consumes RdHi in first Execute or Memory cycle", "cycles": "3", "instruction_bus": "1S+2I", "data_bus": "3I"}
   ],
-  "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
-  "verification": {"status": "NOT_IMPLEMENTED", "tests": []},
-  "notes": "Unlike ARM9TDMI Rev 3, ARM9E-S timing has no operand-value early-termination variable. Dependency and flag-setting qualifications select fixed counts."
+  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv"]},
+  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv"]},
+  "verified_rows": [
+    "ARM946ES-TIMING-MRS-001",
+    "ARM946ES-TIMING-MSR-001",
+    "ARM946ES-TIMING-MSR-002"
+  ],
+  "notes": "Unlike ARM9TDMI Rev 3, ARM9E-S timing has no operand-value early-termination variable. Dependency and flag-setting qualifications select fixed counts. MRS/MSR cycle counts, aggregate bus classes, and the detailed per-cycle I/S order from Tables 8-9 and 8-10 are verified."
 }

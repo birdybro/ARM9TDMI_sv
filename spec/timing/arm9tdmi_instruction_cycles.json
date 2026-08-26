@@ -58,6 +58,12 @@
       {"m": 4, "predicate": "otherwise"}
     ]}
   ],
-  "implementation": {"status": "NOT_IMPLEMENTED", "rtl": []},
-  "verification": {"status": "NOT_IMPLEMENTED", "tests": []}
+  "implementation": {"status": "PARTIAL", "rtl": ["rtl/arm9_psr_transfer_timing.sv"]},
+  "verification": {"status": "PARTIAL", "tests": ["tb/unit/psr_transfer_timing_tb.sv"]},
+  "verified_rows": [
+    "ARM9TDMI-TIMING-MRS-001",
+    "ARM9TDMI-TIMING-MSR-001",
+    "ARM9TDMI-TIMING-MSR-002"
+  ],
+  "notes": "MRS/MSR cycle counts and aggregate instruction/data bus class counts are verified. DDI0180A does not publish the order of the one S and two I instruction cycles for three-cycle MSR, so that per-cycle class remains explicitly UNSPECIFIED rather than inferred from ARM9E-S."
 }
